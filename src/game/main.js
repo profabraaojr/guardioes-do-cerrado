@@ -32,6 +32,7 @@
     stage.style.setProperty('--u', (w / C.W) + 'px');
     GC.DialogUI.resize(w, h);
     document.body.classList.toggle('portrait', portrait);
+    if (GC.Mobile) GC.Mobile.updateRotate(mode);
   }
   window.addEventListener('resize', resize);
 
@@ -52,6 +53,7 @@
   function setMode(m) {
     prevMode = mode; mode = m;
     document.body.dataset.mode = m;
+    if (GC.Mobile) GC.Mobile.updateRotate(m);
     GC.HUD.show(m === 'play' || m === 'pause');
     $('touch').dataset.mode = m;
   }
@@ -200,13 +202,17 @@
 
   // ——— Botões ———
   const click = (id, fn) => $(id).addEventListener('click', () => { A.init(); A.play('swap'); fn(); });
-  click('btnNew', startIntro);
-  click('btnContinue', () => { save = GC.Save.load() || GC.Save.blank(); openSelect(); });
+  click('btnNew', () => { GC.Mobile.onStart(); startIntro(); });
+  click('btnContinue', () => { GC.Mobile.onStart(); save = GC.Save.load() || GC.Save.blank(); openSelect(); });
   click('btnGuide', () => openGuide('title'));
+  click('btnInstall', () => { const panel = GC.Mobile.install(); if (panel) { show('installScreen'); mode = 'controls'; } });
+  click('btnInstallBack', goTitle);
+  $('soundBtn').addEventListener('click', () => { GC.Audio.unlock(); if (GC.Audio.muted || !GC.Audio.running) { if (GC.Audio.muted) GC.Audio.toggleMute(); GC.Audio.unlock(); GC.HUD.toast('Som ligado.'); } else { GC.Audio.toggleMute(); GC.HUD.toast('Som desligado.'); } GC.HUD.reset(); });
+  $('fsBtn').addEventListener('click', () => GC.Mobile.toggleFullscreen());
   click('btnControls', () => { show('controlsScreen'); mode = 'controls'; setTimeout(() => $('btnControlsBack').focus({ preventScroll: true }), 30); });
   click('btnControlsBack', goTitle);
   click('btnSkipIntro', () => { GC.HUD.clearTransient(); openSelect(); });
-  click('btnStart', startGame);
+  click('btnStart', () => { GC.Mobile.onStart(); startGame(); });
   click('btnSelectBack', goTitle);
   click('btnResume', resume);
   click('btnPauseGuide', () => openGuide('pause'));
@@ -309,6 +315,7 @@
     GC.spriteSource = await GC.Sheets.preload();
     GC.Tiles.pregen();
     GC.Background.pregenAsync();
+    GC.Mobile.init();
     GC.DialogUI.init($('ui'));
     GC.HUD.init();
     I.bindTouch($('touch'));

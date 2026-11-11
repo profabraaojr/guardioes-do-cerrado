@@ -30,6 +30,8 @@
         <div class="hud-panel hud-right">
           <span class="cnt" title="Sementes raras"><i class="ico" data-ico="rare"></i><b id="rares">0/5</b></span>
           <span class="cnt" title="Guia de Campo"><i class="ico" data-ico="book"></i><b id="guideCount">0</b></span>
+          <button id="soundBtn" type="button" class="hud-icon" aria-label="Som"><i class="ico" data-ico="sound"></i></button>
+          <button id="fsBtn" type="button" class="hud-icon" aria-label="Tela cheia"><i class="ico" data-ico="fs"></i></button>
           <button id="pauseBtn" type="button" aria-label="Pausar">II</button>
         </div>
       </div>
@@ -65,6 +67,7 @@
             <button id="btnContinue" type="button" class="btn" hidden>Continuar</button>
             <button id="btnGuide" type="button" class="btn">Guia de Campo</button>
             <button id="btnControls" type="button" class="btn">Controles</button>
+            <button id="btnInstall" type="button" class="btn install" hidden>Instalar o jogo</button>
           </nav>
           <p class="motto">“Não precisamos destruir a natureza para vencer uma batalha. Precisamos aprender a protegê-la.”</p>
         </div>
@@ -139,6 +142,27 @@
         </div>
       </section>
 
+      <section id="installScreen" class="screen" hidden>
+        <div class="panel wide">
+          <h2>Instalar o jogo</h2>
+          <div data-os="ios">
+            <p>No iPhone ou iPad, use o <b>Safari</b>:</p>
+            <ol class="steps"><li>toque no botão <b>Compartilhar</b> (quadrado com seta para cima);</li><li>escolha <b>Adicionar à Tela de Início</b>;</li><li>toque em <b>Adicionar</b>.</li></ol>
+            <p class="note">O jogo abre em tela cheia pelo ícone, como um aplicativo, e funciona mesmo sem internet. Se o som não sair, confira se o iPhone não está no modo silencioso.</p>
+          </div>
+          <div data-os="android">
+            <p>No Android, use o <b>Chrome</b>:</p>
+            <ol class="steps"><li>toque no menu <b>⋮</b> no canto superior;</li><li>escolha <b>Instalar app</b> ou <b>Adicionar à tela inicial</b>;</li><li>confirme em <b>Instalar</b>.</li></ol>
+            <p class="note">O jogo abre em tela cheia pelo ícone e funciona mesmo sem internet.</p>
+          </div>
+          <div data-os="desktop">
+            <p>No computador, use o <b>Chrome</b> ou o <b>Edge</b>: clique no ícone de instalação na barra de endereço (monitor com seta) ou, no menu, em <b>Instalar Guardiões do Cerrado</b>.</p>
+            <p class="note">No celular, abra este mesmo endereço e toque em Instalar.</p>
+          </div>
+          <button id="btnInstallBack" type="button" class="btn primary">Voltar</button>
+        </div>
+      </section>
+
       <section id="endScreen" class="screen" hidden>
         <div class="panel wide end">
           <p class="eyebrow">Capítulo 1 concluído</p>
@@ -151,6 +175,7 @@
       </section>
     </div>
     <button id="btnSkipIntro" type="button" class="skip">Pular abertura</button>
+    <div id="rotateHint" hidden><div class="rot-ico"></div><p>Gire o celular para jogar na horizontal.</p><button id="btnRotateDismiss" type="button" class="btn">Jogar assim mesmo</button></div>
   </div>
 
   <!-- Controles de toque -->
@@ -204,4 +229,5 @@
 <script src="src/game/dialogui.js"></script>
 <script src="src/game/hud.js"></script>
 <script src="src/game/game.js"></script>
+<script src="src/game/mobile.js"></script>
 <script src="src/game/main.js"></script>

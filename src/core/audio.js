@@ -180,8 +180,38 @@ GC.Audio = (function () {
     }
   }
 
+  // ——— Liberação do áudio em navegadores móveis ———
+  // iOS só libera o áudio dentro de toque/clique (touchend, click) e silencia o Web Audio
+  // quando o botão de silêncio está ligado. Por isso: tentamos liberar a cada gesto até
+  // o contexto ficar ativo, tocamos um buffer silencioso, pedimos a sessão de áudio de
+  // reprodução (iOS 17+) e usamos um <audio> silencioso em loop (iOS 15/16).
+  let htmlAudio = null;
+  function silentWavUrl() {
+    const rate = 8000, n = rate / 2, b = new ArrayBuffer(44 + n * 2), v = new DataView(b);
+    const w = (o, str) => { for (let i = 0; i < str.length; i++) v.setUint8(o + i, str.charCodeAt(i)); };
+    w(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); w(8, 'WAVE'); w(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+    v.setUint32(24, rate, true); v.setUint32(28, rate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); w(36, 'data'); v.setUint32(40, n * 2, true);
+    return URL.createObjectURL(new Blob([b], { type: 'audio/wav' }));
+  }
+  function unlock() {
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
+    if (!htmlAudio) {
+      try { htmlAudio = document.createElement('audio'); htmlAudio.src = silentWavUrl(); htmlAudio.loop = true; htmlAudio.setAttribute('playsinline', ''); htmlAudio.volume = 0.01; } catch (e) { htmlAudio = null; }
+    }
+    if (htmlAudio && htmlAudio.paused) { const pr = htmlAudio.play(); if (pr && pr.catch) pr.catch(() => {}); }
+    init();
+    if (!ctx) return false;
+    if (ctx.state !== 'running') { const pr = ctx.resume(); if (pr && pr.catch) pr.catch(() => {}); }
+    try { const b = ctx.createBuffer(1, 1, 22050), src = ctx.createBufferSource(); src.buffer = b; src.connect(ctx.destination); src.start(0); } catch (e) {}
+    if (music.name && !music.timer) { music.next = ctx.currentTime + 0.1; music.timer = setInterval(scheduleMusic, 50); }
+    return ctx.state === 'running';
+  }
+  ['touchend', 'click', 'keydown', 'pointerup', 'touchstart', 'pointerdown'].forEach((ev) => window.addEventListener(ev, () => { if (!ctx || ctx.state !== 'running') unlock(); }, { passive: true, capture: true }));
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && ctx && ctx.state !== 'running') { const pr = ctx.resume(); if (pr && pr.catch) pr.catch(() => {}); } });
+
   return {
-    init,
+    init, unlock,
+    get running() { return !!ctx && ctx.state === 'running'; },
     get ready() { return !!ctx; },
     get muted() { return muted; },
     play(name) { if (ctx && SFX[name]) SFX[name](); },

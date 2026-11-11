@@ -118,7 +118,6 @@ kbd { font-family: var(--f-display); font-size: 0.9em; background: var(--panel-2
 /* camada de diálogos: canvas em resolução física, escala inteira (ver dialogui.js) */
 #ui { position: absolute; left: 0; top: 0; pointer-events: none; z-index: 6; image-rendering: pixelated; }
 #ui.active { pointer-events: auto; cursor: pointer; }
-body.dlg-open #touch .dpad, body.dlg-open #touch .b:not(.big) { visibility: hidden; }
 
 /* ——— Ficha ——— */
 #card { position: absolute; inset: 0; background: rgba(8, 6, 4, 0.66); display: flex; align-items: center; justify-content: center; z-index: 10; }
@@ -225,3 +224,23 @@ body.touch.portrait[data-mode="play"] #touch { position: relative; flex: none; w
 @media (prefers-reduced-motion: reduce) {
   #banner, .toast, #speech { transition: none; animation: none; }
 }
+
+/* ——— celular: botões do HUD, instalação e aviso de orientação ——— */
+.hud-icon { pointer-events: auto; background: rgba(14, 22, 38, 0.6); border: 1px solid rgba(122, 192, 248, 0.5); width: max(30px, calc(var(--u) * 12)); height: max(30px, calc(var(--u) * 12)); display: grid; place-items: center; cursor: pointer; padding: 0; }
+.hud-icon .ico { width: 70%; height: 70%; }
+.hud-icon[hidden] { display: none; }
+.btn.install { background: #3a86d8; color: #ffffff; border-color: #1e4e90; }
+.btn.install[hidden] { display: none; }
+.steps { margin: 0; padding-left: 1.4em; font-size: calc(var(--u) * 7); line-height: 1.5; }
+#installScreen p { margin: 0; font-size: calc(var(--u) * 7); }
+#installScreen [data-os] { display: flex; flex-direction: column; gap: calc(var(--u) * 3); }
+#installScreen [data-os][hidden] { display: none; }
+#rotateHint { position: fixed; inset: 0; z-index: 50; background: rgba(10, 14, 22, 0.92); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 24px; text-align: center; color: var(--ink); font-family: var(--f-display); }
+#rotateHint[hidden] { display: none; }
+#rotateHint p { font-size: 20px; margin: 0; max-width: 18em; }
+.rot-ico { width: 46px; height: 80px; border: 4px solid var(--ipe); border-radius: 8px; animation: girar 2s ease-in-out infinite; }
+@keyframes girar { 0%, 30% { transform: rotate(0); } 60%, 100% { transform: rotate(90deg); } }
+@media (prefers-reduced-motion: reduce) { .rot-ico { animation: none; transform: rotate(90deg); } }
+/* controles de toque maiores e mais visíveis em telas pequenas na horizontal */
+body.touch[data-mode="play"] #touch { opacity: 0.95; }
+@media (max-height: 460px) { .dpad { width: 120px; height: 120px; } .b { width: 58px; height: 58px; } .b.big { width: 70px; height: 70px; } }

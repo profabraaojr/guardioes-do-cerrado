@@ -69,6 +69,8 @@ GC.HUD = (function () {
     }
     const allyTxt = g.allyCd > 0 ? Math.ceil(g.allyCd) + 's' : GC.CHARACTERS[ch].allyName;
     if (last.ally !== allyTxt) { last.ally = allyTxt; els.ally.textContent = allyTxt; els.ally.classList.toggle('cool', g.allyCd > 0); }
+    const snd = GC.Audio.muted || !GC.Audio.running ? 'mute' : 'sound';
+    if (last.snd !== snd) { last.snd = snd; const i = document.querySelector('#soundBtn .ico'); if (i) i.style.backgroundImage = 'url(' + icon(snd) + ')'; }
     const pc = g.player.powerCd || 0;
     const powTxt = pc > 0 ? Math.ceil(pc) + 's' : GC.CHARACTERS[ch].powerName;
     if (last.pow !== powTxt) { last.pow = powTxt; els.power.textContent = powTxt; els.power.classList.toggle('cool', pc > 0); }
@@ -108,6 +110,13 @@ GC.HUD = (function () {
       }
       case 'drop': P.poly([[8, 1], [13, 9], [12, 13], [8, 15], [4, 13], [3, 9]], '#3aa0e8'); P.ellipse(8, 11, 4.2, 3.6, '#3aa0e8'); P.rect(6, 6, 2, 4, '#bfe8ff'); P.outline('#0a1a2e'); break;
       case 'rare': P.circle(8, 8, 7, 'rgba(255,220,90,0.35)'); P.ellipse(8, 10, 4, 5, '#d8961e'); P.ellipse(7, 8, 2, 2, '#fde070'); P.line(8, 5, 9, 1, '#3e9a3a'); P.rect(9, 1, 4, 2, '#6ac84a'); P.outline('#2a1a04'); break;
+      case 'sound': case 'mute': {
+        P.rect(2, 6, 3, 4, '#e8f4ff'); P.poly([[5, 6], [9, 2], [9, 14], [5, 10]], '#e8f4ff');
+        if (name === 'sound') { P.line(11, 6, 11, 10, '#8ad8ff'); P.line(13, 4, 13, 12, '#8ad8ff'); }
+        else { P.line(11, 5, 15, 11, '#ff7a6a'); P.line(15, 5, 11, 11, '#ff7a6a'); }
+        P.outline('#06090f'); break;
+      }
+      case 'fs': for (const [x, y, dx, dy] of [[2, 2, 1, 1], [14, 2, -1, 1], [2, 14, 1, -1], [14, 14, -1, -1]]) { P.rect(Math.min(x, x + dx * 3), y, 4, 1.5, '#e8f4ff'); P.rect(x, Math.min(y, y + dy * 3), 1.5, 4, '#e8f4ff'); } P.outline('#06090f'); break;
       case 'book': P.rect(2, 3, 12, 11, '#3a8a3a'); P.rect(3, 4, 10, 9, '#5ab84a'); P.rect(7, 3, 2, 11, '#2a6a2a'); P.rect(4, 6, 2, 1, '#e8f8d0'); P.rect(10, 6, 2, 1, '#e8f8d0'); P.rect(4, 8, 2, 1, '#e8f8d0'); P.rect(10, 8, 2, 1, '#e8f8d0'); P.outline('#0e1a0a'); break;
     }
     icons[name] = P.c.toDataURL();
