@@ -4,8 +4,9 @@
 window.GC = window.GC || {};
 
 GC.CFG = {
-  W: 480,            // resolução interna (pixel art)
+  W: 480,            // largura do mundo visível (unidades lógicas)
   H: 270,
+  SCALE: 2,          // densidade da arte: tela de 960×540, 1 unidade = 2 pixels
   TILE: 16,
   STEP: 1 / 60,      // passo fixo da simulação
 

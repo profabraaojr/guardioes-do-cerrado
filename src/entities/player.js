@@ -346,49 +346,35 @@ GC.Player = class Player {
     g.save.stats.deaths++;
   }
 
-  draw(ctx, cam, g) {
-    if (this.state === 'dead') return;
-    if (this.invuln > 0 && this.flash <= 0 && Math.floor(this.invuln * 14) % 2 === 0) return;
-    const cx = this.cx - cam.x, by = this.bottom - cam.y;
-    let frame = 'stand';
-    const t = this.animT;
+  // escolhe a animação da folha conforme o estado (a lógica de movimento não muda)
+  animFor(g) {
+    const C = GC.CFG;
+    if (this.state === 'dead') return ['death', 1.4 - this.deadT];
+    if (g.victory) return ['victory', this.t];
+    if (this.invuln > C.INVULN - 0.35) return ['hurt', this.t];
     switch (this.state) {
-      case 'slide': frame = 'slide'; break;
-      case 'climb': case 'vine': frame = Math.floor(t * 6) % 2 ? 'climb1' : 'climb2'; break;
-      case 'swing': frame = 'jump'; break;
-      case 'swim': frame = ['run1', 'run2', 'run3', 'run2'][Math.floor(t * 5) % 4]; break;
-      default:
-        if (this.onGround) {
-          if (Math.abs(this.vx) > 12) {
-            const rate = this.sneaking ? 5 : 12;
-            frame = ['run1', 'run2', 'run3', 'run2'][Math.floor(t * rate) % 4];
-          } else frame = Math.floor(t * 1.6) % 2 ? 'breathe' : 'stand';
-        } else frame = this.vy < 0 ? 'jump' : 'fall';
+      case 'slide': return ['slide', this.t];
+      case 'climb': case 'vine': return ['climb', this.animT];
+      case 'swing': return ['jump', this.t];
+      case 'swim': return ['swim', this.animT];
     }
-    if (this.state === 'normal' && this.crouch && this.onGround) {
-      // pose abaixada: tronco rebaixado sobre as botas
-      const F = GC.Art.frames[this.char][this.flash > 0 ? 'white' : (Math.abs(this.vx) > 8 && Math.floor(t * 6) % 2 ? 'run2' : 'stand')];
-      const img = this.facing > 0 ? F.r : F.l;
-      const x = Math.round(cx - 8), y = Math.round(by);
-      ctx.drawImage(img, 0, 0, 16, 15, x, y - 19, 16, 15);
-      ctx.drawImage(img, 0, 19, 16, 5, x, y - 5, 16, 5);
-      return;
+    if (this.firingT > 0 || this.spraying) return ['tool', this.spraying ? 0.2 : 0.21 - this.firingT * 2];
+    if (this.onGround) {
+      if (this.crouch) return ['crouch', Math.abs(this.vx) > 8 ? this.animT : 0];
+      if (Math.abs(this.vx) > 100) return ['run', this.animT];
+      if (Math.abs(this.vx) > 10) return ['walk', this.animT];
+      return ['idle', this.t];
     }
-    const yo = frame === 'slide' ? 2 : 0;
-    ctx.save();
-    if (this.state === 'swim') {
-      ctx.translate(Math.round(cx), Math.round(by - 11));
-      ctx.rotate(this.facing * 0.35);
-      ctx.translate(-Math.round(cx), -Math.round(by - 11));
-    }
-    GC.Art.player(ctx, cx, by + yo, this.facing, frame, {
-      white: this.flash > 0,
-      tool: this.state === 'normal' || this.state === 'swim' ? g.tool : null,
-      aim: this.aim,
-      firing: this.firingT > 0,
-      char: this.char
-    });
-    ctx.restore();
+    return [this.vy < 0 ? 'jump' : 'fall', this.t];
+  }
+
+  draw(ctx, cam, g) {
+    if (this.invuln > 0 && this.flash <= 0 && this.state !== 'dead' && Math.floor(this.invuln * 14) % 2 === 0) return;
+    const [anim, t] = this.animFor(g);
+    const opt = { white: this.flash > 0 };
+    if (anim === 'tool') opt.frame = this.spraying ? 2 : (this.firingT > 0.05 ? 1 : 2);
+    GC.Sheets.draw(ctx, this.char, anim, t, this.cx - cam.x, this.bottom - cam.y + (this.state === 'swim' ? 4 : 0), this.facing < 0, opt);
+    const cx = this.cx - cam.x, by = this.bottom - cam.y;
     if (this.netT > 0) {
       ctx.strokeStyle = '#d8c89a'; ctx.lineWidth = 1;
       const x0 = Math.round(cx) - 9, y0 = Math.round(by) - 24;

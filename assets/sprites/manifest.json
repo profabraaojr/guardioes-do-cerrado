@@ -1,0 +1,138 @@
+[
+  {
+    "name": "piata",
+    "frames": 51,
+    "frameSize": "64x64",
+    "animations": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "fall",
+      "tool",
+      "hurt",
+      "death",
+      "victory",
+      "climb",
+      "swim",
+      "slide",
+      "crouch"
+    ]
+  },
+  {
+    "name": "larinha",
+    "frames": 51,
+    "frameSize": "64x64",
+    "animations": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "fall",
+      "tool",
+      "hurt",
+      "death",
+      "victory",
+      "climb",
+      "swim",
+      "slide",
+      "crouch"
+    ]
+  },
+  {
+    "name": "traficante",
+    "frames": 36,
+    "frameSize": "64x64",
+    "animations": [
+      "idle",
+      "walk",
+      "run",
+      "alert",
+      "throw",
+      "hands",
+      "slip",
+      "crouch",
+      "talk"
+    ]
+  },
+  {
+    "name": "cacador",
+    "frames": 36,
+    "frameSize": "64x64",
+    "animations": [
+      "idle",
+      "walk",
+      "run",
+      "alert",
+      "throw",
+      "hands",
+      "slip",
+      "crouch",
+      "talk"
+    ]
+  },
+  {
+    "name": "descartador",
+    "frames": 36,
+    "frameSize": "64x64",
+    "animations": [
+      "idle",
+      "walk",
+      "run",
+      "alert",
+      "throw",
+      "hands",
+      "slip",
+      "crouch",
+      "talk"
+    ]
+  },
+  {
+    "name": "garimpeiro",
+    "frames": 36,
+    "frameSize": "64x64",
+    "animations": [
+      "idle",
+      "walk",
+      "run",
+      "alert",
+      "throw",
+      "hands",
+      "slip",
+      "crouch",
+      "talk"
+    ]
+  },
+  {
+    "name": "cida",
+    "frames": 36,
+    "frameSize": "64x64",
+    "animations": [
+      "idle",
+      "walk",
+      "run",
+      "alert",
+      "throw",
+      "hands",
+      "slip",
+      "crouch",
+      "talk"
+    ]
+  },
+  {
+    "name": "rafael",
+    "frames": 36,
+    "frameSize": "64x64",
+    "animations": [
+      "idle",
+      "walk",
+      "run",
+      "alert",
+      "throw",
+      "hands",
+      "slip",
+      "crouch",
+      "talk"
+    ]
+  }
+]

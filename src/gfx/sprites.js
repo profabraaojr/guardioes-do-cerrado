@@ -158,29 +158,11 @@ GC.Art = (function () {
     init: buildPlayer,
     frames,
     P,
+    // compatibilidade: nomes de quadro antigos → animações das folhas novas
     player(ctx, cx, by, f, frame, opt = {}) {
-      const who = opt.char || 'piata';
-      const F = frames[who];
-      const fr = F[frame] || F.stand;
-      const img = opt.white ? F.white : fr;
-      const p = P(ctx, cx, by, f);
-      // bastão de exploração de Piatã, preso à mochila (apoio para escaladas, não é arma)
-      if (who === 'piata' && frame !== 'slide' && !frame.startsWith('climb')) {
-        for (let i = 0; i < 18; i++) p(i === 5 || i === 6 ? '#d8b040' : '#8a5a2e', -7 + Math.floor(i / 6), -26 + i, 2, 1);
-      }
-      ctx.globalAlpha = opt.alpha === undefined ? 1 : opt.alpha;
-      ctx.drawImage(f > 0 ? img.r : img.l, Math.round(cx - 8), Math.round(by - 24));
-      ctx.globalAlpha = 1;
-      if (!opt.tool || frame === 'slide' || frame.startsWith('climb')) return;
-      const yy = opt.aim === 'up' ? -17 : opt.aim === 'down' ? -11 : -13;
-      if (opt.tool === 'seed') {
-        // Piatã lança sementes nativas com a mão
-        if (opt.firing) { p('#a86e48', 4, yy, 5, 2); p('#7a4a1e', 9, yy - 1, 3, 3); p('#6ec04a', 10, yy - 2, 1, 1); }
-        else { p('#8a6a3a', -4, -9, 4, 4); p('#5a4024', -4, -9, 4, 1); } // bornal de sementes
-      } else {
-        // bico purificador da EcoPack de Larinha
-        p('#3e6676', 3, yy, 6, 3); p('#6ae8c8', 8, yy, 3, 2); p('#c8c8d0', 2, yy + 1, 2, 1);
-      }
+      const map = { stand: 'idle', breathe: 'idle', run1: 'walk', run2: 'walk', run3: 'walk', jump: 'jump', fall: 'fall', slide: 'slide', climb1: 'climb', climb2: 'climb' };
+      const anim = map[frame] || frame;
+      GC.Sheets.draw(ctx, opt.char || 'piata', anim, opt.t !== undefined ? opt.t : performance.now() / 1000, cx, by, f < 0, { alpha: opt.alpha, white: opt.white });
     },
 
     // Emblema fictício do Projeto Horizonte: sol nascendo sobre uma linha reta
@@ -201,6 +183,7 @@ GC.Art = (function () {
 
     // Moradores e parceiros (desenho simples, sem caricatura)
     villager(ctx, cx, by, f, t, look) {
+      if (GC.Sheets.get(look)) { GC.Sheets.draw(ctx, look, 'talk', t, cx, by, f < 0); return; }
       const p = P(ctx, cx, by, f);
       const breathe = Math.round(Math.sin(t * 2) * 0.5);
       const L = { cida: { skin: '#b07850', hair: '#d8d0c8', shirt: '#4a7ab0', pants: '#5a4a3a', hat: '#e8dcc0', band: '#8a5a2e' },
@@ -222,41 +205,8 @@ GC.Art = (function () {
 
     // Infratores (antagonistas humanos): figuras simples, sem caricatura
     human(ctx, cx, by, f, t, look, pose, flash) {
-      const L = {
-        traficante: { skin: '#b07850', shirt: '#2a2a32', pants: '#3a3a48', hat: '#16161c', acc: '#3a3a48', shades: true },
-        cacador: { skin: '#9a6a48', shirt: '#5a6a3a', pants: '#4a4a32', hat: '#6a7a42', acc: '#3a2a1a', brim: true },
-        descartador: { skin: '#c8906a', shirt: '#5a6270', pants: '#2a2d36', hat: '#3a3e4a', acc: '#22252e', hood: true },
-        garimpeiro: { skin: '#8a5a3a', shirt: '#8a7a5a', pants: '#4a3e2e', hat: '#e8c030', acc: '#c8302a', helmet: true }
-      }[look] || {};
-      const W = flash ? '#ffffff' : null;
-      if (pose === 'slip') {
-        // escorregou: deitado de lado
-        ctx.fillStyle = W || L.pants; ctx.fillRect(Math.round(cx - 12), Math.round(by - 5), 10, 5);
-        ctx.fillStyle = W || L.shirt; ctx.fillRect(Math.round(cx - 3), Math.round(by - 6), 10, 6);
-        ctx.fillStyle = W || L.skin; ctx.fillRect(Math.round(cx + 7), Math.round(by - 7), 5, 5);
-        ctx.fillStyle = W || L.hat; ctx.fillRect(Math.round(cx + 7), Math.round(by - 8), 6, 2);
-        ctx.fillStyle = '#bfe8ff'; ctx.fillRect(Math.round(cx - 14), Math.round(by - 1), 30, 1);
-        const sp = Math.floor(t * 6) % 3; ctx.fillStyle = '#f2c230'; ctx.fillRect(Math.round(cx + 9 + sp * 2), Math.round(by - 12), 1, 1); // tontura
-        return;
-      }
-      const p = P(ctx, cx, by, f);
-      const step = (pose === 'walk' || pose === 'run') ? Math.round(Math.sin(t * (pose === 'run' ? 16 : 9)) * 2) : 0;
-      const crouch = pose === 'crouch' ? 4 : 0;
-      p('#1b1a24', -5 + step, -2, 4, 2); p('#1b1a24', 1 - step, -2, 4, 2);
-      p(W || L.pants, -5 + step, -10 + crouch, 4, 8 - crouch); p(W || L.pants, 1 - step, -10 + crouch, 4, 8 - crouch);
-      p(W || L.shirt, -6, -20 + crouch, 12, 11); p('rgba(0,0,0,0.2)', -6, -11 + crouch, 12, 1);
-      if (L.hood) p(W || L.hat, -6, -21 + crouch, 4, 4);
-      // braços conforme a pose
-      if (pose === 'hands') { p(W || L.skin, -7, -30, 2, 10); p(W || L.skin, 5, -30, 2, 10); }
-      else if (pose === 'throw') { p(W || L.skin, 5, -24 + crouch, 7, 2); }
-      else if (pose === 'alert') { p(W || L.skin, 6, -19 + crouch, 4, 2); }
-      else p(W || L.skin, 6, -18 + crouch, 2, 6);
-      p(W || L.skin, -4, -27 + crouch, 9, 7); p('#1b1a24', 3, -25 + crouch, 1, 1);
-      if (L.shades) p('#1b1a24', 1, -25 + crouch, 4, 1);
-      if (L.helmet) { p(W || L.hat, -5, -30 + crouch, 11, 4); p('#c8a020', -6, -27 + crouch, 13, 1); p(L.acc, -4, -22 + crouch, 9, 2); }
-      else if (L.brim) { p(W || L.hat, -7, -28 + crouch, 15, 2); p(W || L.hat, -4, -31 + crouch, 9, 3); }
-      else { p(W || L.hat, -5, -30 + crouch, 10, 3); p(W || L.hat, 4, -28 + crouch, 4, 1); }
-      if (pose === 'hands' && Math.floor(t * 3) % 2) { p('#ffffff', -2, -36, 1, 3); p('#ffffff', -2, -32, 1, 1); } // "!"
+      const anim = { walk: 'walk', run: 'run', alert: 'alert', throw: 'throw', hands: 'hands', slip: 'slip', crouch: 'crouch' }[pose] || 'idle';
+      GC.Sheets.draw(ctx, look, anim, t, cx, by, f < 0, { white: flash });
     },
 
     // ——— Fauna ———

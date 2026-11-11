@@ -257,6 +257,8 @@
 
   function render() {
     GC.DialogUI.render();
+    ctx.setTransform(C.SCALE, 0, 0, C.SCALE, 0, 0);
+    ctx.imageSmoothingEnabled = false;
     if ((mode === 'play' || mode === 'pause') && game) { game.render(ctx); return; }
     // fundos animados das telas
     if (!titleLevel) titleLevel = new GC.Level(GC.Levels.fase1);
@@ -290,8 +292,9 @@
   }
 
   // ——— Inicialização ———
-  function boot() {
+  async function boot() {
     GC.Art.init();
+    GC.spriteSource = await GC.Sheets.preload();
     GC.Tiles.pregen();
     GC.Background.pregen();
     GC.DialogUI.init($('ui'));

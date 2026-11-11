@@ -407,8 +407,9 @@
       if (p.state === 'dead') return;
       const tr = this.trail[Math.min(this.trail.length - 1, 22)];
       if (!tr || this.trail.length < 8) return;
-      const frame = tr.st === 'swim' ? 'run2' : (tr.st === 'climb' || tr.st === 'vine') ? 'climb1' : (this.trail.length > 22 && Math.abs(this.trail[0].x - tr.x) > 4 ? ['run1', 'run2', 'run3', 'run2'][Math.floor(this.time * 10) % 4] : 'stand');
-      GC.Art.player(ctx, tr.x - cam.x, tr.y - cam.y, tr.f, frame, { char: this.partner, alpha: 0.9 });
+      const moving = this.trail.length > 22 && Math.abs(this.trail[0].x - tr.x) > 4;
+      const anim = tr.st === 'swim' ? 'swim' : (tr.st === 'climb' || tr.st === 'vine') ? 'climb' : moving ? 'walk' : 'idle';
+      GC.Sheets.draw(ctx, this.partner, anim, this.time, tr.x - cam.x, tr.y - cam.y, tr.f < 0, { alpha: 0.92 });
     }
 
     drawMarkers(ctx, cam) {
