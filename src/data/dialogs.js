@@ -26,6 +26,13 @@ GC.INTRO = [
 ];
 
 GC.DIALOGS = {
+  poderes: [
+    { who: 'larinha', text: 'Olha aquela {y|rocha rachada} com uma semente presa. Dá para abrir sem estragar nada em volta.', mood: 'happy' },
+    { who: 'piata', text: 'Minha avó diz que força é para proteger, nunca para ferir. O {g|Soco da Terra} é para pedra e máquina.', mood: 'determined' },
+    { who: 'larinha', text: 'E eu liguei a EcoPack a um satélite de monitoramento: {a|Feixe do Satélite}, luz concentrada direto do espaço!', mood: 'happy' },
+    { who: 'piata', text: 'Só não aponta para bicho nem para gente.', mood: 'neutral' },
+    { who: 'larinha', text: 'Nem dá: o sistema só trava em máquinas, criaturas contaminadas, rochas e caixas. Aperte F para usar.', mood: 'determined' }
+  ],
   garimpo: [
     { who: 'piata', text: 'Uma draga de garimpo dentro da caverna! É dela que vem o {y|lodo}.', mood: 'surprised' },
     { who: 'larinha', text: 'E {a|mercúrio}. Meu sensor está apitando sem parar.', mood: 'worried' },

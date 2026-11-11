@@ -286,6 +286,23 @@ GC.Player = class Player {
     if (!lock && I.pressed('swap')) g.swapTool();
     const canUse = (this.state === 'normal' || (this.state === 'swim' && !this.wet(g.level, this.cx, this.y + 3))) && !lock;
     this.aim = up ? 'up' : (down && !this.onGround ? 'down' : 'fwd');
+    // ——— poder especial (F) ———
+    this.powerCd = Math.max(0, (this.powerCd || 0) - dt);
+    if (!lock && I.pressed('power') && canUse && !this.punchT && !this.beamT) {
+      const ch = GC.CHARACTERS[this.char];
+      if (this.powerCd > 0) A.play('deny');
+      else {
+        this.powerCd = ch.powerCd; this.toolUsedT = 0;
+        if (ch.power === 'soco') { this.punchT = 0.3; this.punchHit = false; }
+        else { this.beamT = 0.45; GC.Powers.beam(g, this); }
+      }
+    }
+    if (this.punchT > 0) {
+      this.punchT = Math.max(0, this.punchT - dt);
+      if (this.onGround) this.vx *= 0.8;
+      if (!this.punchHit && this.punchT < 0.22) { this.punchHit = true; GC.Powers.punch(g, this); }
+    }
+    if (this.beamT > 0) { this.beamT = Math.max(0, this.beamT - dt); if (this.onGround) this.vx *= 0.85; }
     const tool = g.tool;
     if (tool === 'seed') {
       if (canUse && I.down('tool') && this.seedCd <= 0) {
@@ -358,6 +375,8 @@ GC.Player = class Player {
       case 'swing': return ['jump', this.t];
       case 'swim': return ['swim', this.animT];
     }
+    if (this.punchT > 0) return ['punch', 0.3 - this.punchT];
+    if (this.beamT > 0) return ['beam', this.t];
     if (this.firingT > 0 || this.spraying) return ['tool', this.spraying ? 0.2 : 0.21 - this.firingT * 2];
     if (this.onGround) {
       if (this.crouch) return ['crouch', Math.abs(this.vx) > 8 ? this.animT : 0];

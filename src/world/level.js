@@ -122,6 +122,7 @@ GC.Level = class Level {
         case T.ROCK: im(tex.rock[v4]); if (upOpen) { ctx.fillStyle = GC.THEMES[this.theme[tx]].rock[1]; ctx.fillRect(sx, sy, S, 1); ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fillRect(sx, sy, S, 0.5); } break;
         case T.CLIFF: im(tex.cliff[v4]); if (upOpen) ctx.drawImage(tex.grassTop[v4], sx, sy - 2, S, 12); break;
         case T.SAND: im(tex.sand[v2]); break;
+        case T.CRACKED: im(tex.cracked[v2]); break;
         case T.DEGRADED: im(tex.degraded[v2]); break;
         case T.MOUND: im(tex.mound[v2]); break;
         case T.PLANK: im(tex.plank[0]); break;

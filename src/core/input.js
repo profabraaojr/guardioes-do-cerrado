@@ -1,7 +1,7 @@
 // Entrada unificada: teclado, toque (botões virtuais) e gamepad.
 // Cada ação expõe: down (segurada), pressed (apertada neste quadro), released.
 GC.Input = (function () {
-  const ACTIONS = ['left', 'right', 'up', 'down', 'jump', 'tool', 'swap', 'ally', 'interact', 'pause', 'confirm'];
+  const ACTIONS = ['left', 'right', 'up', 'down', 'jump', 'tool', 'swap', 'ally', 'power', 'interact', 'pause', 'confirm'];
   const KEYMAP = {
     ArrowLeft: 'left', KeyA: 'left',
     ArrowRight: 'right', KeyD: 'right',
@@ -11,6 +11,7 @@ GC.Input = (function () {
     KeyJ: 'tool', KeyX: 'tool',
     KeyL: 'swap', KeyC: 'swap',
     KeyQ: 'ally', KeyV: 'ally',
+    KeyF: 'power', KeyB: 'power',
     KeyE: 'interact',
     Escape: 'pause', KeyP: 'pause',
     Enter: 'confirm'
@@ -88,7 +89,7 @@ GC.Input = (function () {
       P.left = b(14) || ax < -0.4; P.right = b(15) || ax > 0.4;
       P.up = b(12) || ay < -0.5; P.down = b(13) || ay > 0.5;
       P.jump = b(0); P.confirm = b(0); P.tool = b(2) || b(7); P.swap = b(3);
-      P.ally = b(1) || b(5); P.interact = b(4); P.pause = b(9);
+      P.ally = b(1) || b(5); P.interact = b(4); P.pause = b(9); P.power = b(6) || b(10);
       if (Object.values(P).some(Boolean)) lastDevice = 'gamepad';
       break;
     }

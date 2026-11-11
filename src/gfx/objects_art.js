@@ -91,7 +91,15 @@
   });
 
   // ——— Brilho de coleta e poeira de pouso ———
-  def('brilho', 32, 32, [16, 16], { sparkle: { n: 5, fps: 18, loop: false }, dust: { n: 4, fps: 16, loop: false } }, (P, a, i) => {
+  def('brilho', 32, 32, [16, 16], { sparkle: { n: 5, fps: 18, loop: false }, dust: { n: 4, fps: 16, loop: false }, impacto: { n: 5, fps: 20, loop: false } }, (P, a, i) => {
+    if (a === 'impacto') {
+      // estrela de impacto: núcleo branco, raios dourados e anel que se abre
+      const r = 4 + i * 3;
+      if (i < 3) P.circle(16, 16, 6 - i, '#ffffff');
+      for (let k = 0; k < 8; k++) { const ang = k / 8 * Math.PI * 2 + (i % 2) * 0.2, L = k % 2 ? r : r * 1.5; P.line(16 + Math.cos(ang) * (r * 0.4), 16 + Math.sin(ang) * (r * 0.4), 16 + Math.cos(ang) * L, 16 + Math.sin(ang) * L, k % 2 ? '#f8d860' : '#ffffff'); }
+      if (i > 1) for (let k = 0; k < 16; k++) { const ang = k / 16 * Math.PI * 2; P.px(16 + Math.cos(ang) * (r + 2), 16 + Math.sin(ang) * (r + 2), '#f2a040'); }
+      return;
+    }
     if (a === 'sparkle') {
       const r = 3 + i * 3, c = i < 3 ? '#fff6b0' : '#f2c230';
       P.rect(16 - r, 15, r * 2, 2, c); P.rect(15, 16 - r, 2, r * 2, c);

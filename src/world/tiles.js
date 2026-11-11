@@ -1,7 +1,7 @@
 // Definição dos tiles e geração procedural das texturas (pixel art)
 GC.T = {
   EMPTY: 0, GRASS: 1, DIRT: 2, ROCK: 3, CLIFF: 4, PLANK: 5, WATER: 6, POLLUTED: 7,
-  VINE: 8, SLOPE_R: 9, SLOPE_L: 10, DEGRADED: 11, FAKE: 12, MOUND: 13, SAND: 14, BRANCH: 15, BUSH: 16, GATE: 17
+  VINE: 8, SLOPE_R: 9, SLOPE_L: 10, DEGRADED: 11, FAKE: 12, MOUND: 13, SAND: 14, BRANCH: 15, BUSH: 16, GATE: 17, CRACKED: 18
 };
 GC.D = { NONE: 0, FALLS: 1, CAVE: 2, ART: 3 };
 
@@ -27,6 +27,7 @@ GC.D = { NONE: 0, FALLS: 1, CAVE: 2, ART: 3 };
   def(T.BRANCH, { oneway: true });
   def(T.BUSH, { oneway: true });   // plataforma de arbusto (desenhada pela entidade)
   def(T.GATE, { solid: true });    // barreira/comporta (desenhada pela entidade)
+  def(T.CRACKED, { solid: true }); // rocha rachada: quebra com o Soco da Terra ou o Feixe do Satélite
   GC.TP = P;
 
   // Paletas por ambiente: saturadas e harmônicas (solo de laterita, verdes vivos)
@@ -97,6 +98,14 @@ GC.D = { NONE: 0, FALLS: 1, CAVE: 2, ART: 3 };
       // apoios para escalada e musgo
       for (const [px, py] of [[4, 4 + v * 2], [18, 16 - v * 2], [8, 24]]) { x.fillStyle = R[3]; x.fillRect(px, py + 3, 8, 2); x.fillStyle = R[1]; x.fillRect(px, py, 8, 3); x.fillStyle = 'rgba(255,255,255,0.25)'; x.fillRect(px, py, 8, 1); }
       x.fillStyle = '#3e8a3a'; x.fillRect(0, 26, 5, 6); x.fillRect(24, 8, 8, 3); x.fillStyle = '#6ac04a'; x.fillRect(1, 26, 3, 2); x.fillRect(25, 8, 5, 1);
+    });
+    make('cracked', 2, (x, v, r) => {
+      x.drawImage(out.rock[v + 1], 0, 0);
+      // rachaduras claras e escuras, bem visíveis
+      const crack = [[16, 0], [14, 6], [18, 11], [13, 17], [17, 23], [15, 31]];
+      for (let i = 0; i < crack.length - 1; i++) { const [a, b] = crack[i], [c, d] = crack[i + 1]; for (let k = 0; k <= 6; k++) { const px = Math.round(a + (c - a) * k / 6), py = Math.round(b + (d - b) * k / 6); x.fillStyle = '#2a1a12'; x.fillRect(px, py, 2, 1); x.fillStyle = 'rgba(255,230,190,0.6)'; x.fillRect(px + 2, py, 1, 1); } }
+      for (const [a, b, c, d] of [[14, 6, 6, 9], [18, 11, 26, 8], [13, 17, 5, 22], [17, 23, 25, 27]]) for (let k = 0; k <= 5; k++) { x.fillStyle = '#3a2418'; x.fillRect(Math.round(a + (c - a) * k / 5), Math.round(b + (d - b) * k / 5), 1, 1); }
+      x.fillStyle = 'rgba(255,200,120,0.18)'; x.fillRect(0, 0, S, 2);
     });
     make('sand', 2, (x, v, r) => { x.fillStyle = th.sand[0]; x.fillRect(0, 0, S, S); blotch(x, r, [th.sand[1], th.sand[2]], 6, 2, 4); for (let i = 0; i < 30; i++) { x.fillStyle = r() < 0.5 ? th.sand[1] : th.sand[2]; x.fillRect((r() * S) | 0, (r() * S) | 0, 1, 1); } });
     make('degraded', 2, (x, v, r) => {

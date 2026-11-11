@@ -106,7 +106,7 @@ GC.Sheets = (function () {
 (function () {
   const A = GC.Puppet.ANIMS;
   const pick = (names) => Object.fromEntries(names.map((n) => [n, { n: A[n].n, fps: A[n].fps, loop: A[n].loop }]));
-  const hero = ['idle', 'walk', 'run', 'jump', 'fall', 'tool', 'hurt', 'death', 'victory', 'climb', 'swim', 'slide', 'crouch'];
+  const hero = ['idle', 'walk', 'run', 'jump', 'fall', 'tool', 'punch', 'beam', 'hurt', 'death', 'victory', 'climb', 'swim', 'slide', 'crouch'];
   for (const who of ['piata', 'larinha']) {
     GC.Sheets.define(who, {
       fw: 64, fh: 64, pivot: [32, 62], hitbox: { w: 20, h: 44 },

@@ -204,7 +204,10 @@ body.touch[data-mode="play"] #touch { display: flex; }
 .dpad[data-dir~="up"] .u, .dpad[data-dir~="down"] .d, .dpad[data-dir~="left"] .l, .dpad[data-dir~="right"] .r { opacity: 1; border-color: transparent; }
 .dpad[data-dir~="up"] .u { border-bottom-color: var(--ipe); } .dpad[data-dir~="down"] .d { border-top-color: var(--ipe); }
 .dpad[data-dir~="left"] .l { border-right-color: var(--ipe); } .dpad[data-dir~="right"] .r { border-left-color: var(--ipe); }
-.actions { pointer-events: auto; display: grid; grid-template-columns: auto auto; grid-template-areas: "ally swap" "tool jump"; gap: 10px; align-items: end; }
+.actions { pointer-events: auto; display: grid; grid-template-columns: auto auto auto; grid-template-areas: "ally swap ." "power tool jump"; gap: 10px; align-items: end; }
+.b.power { grid-area: power; width: 58px; height: 58px; background: rgba(232, 116, 58, 0.35); border-color: rgba(255, 160, 100, 0.7); font-size: 13px; }
+.hud-power em { color: #ffb070; }
+.hud-power em.cool { color: #8a96a8; }
 .b { font-family: var(--f-display); font-weight: 600; font-size: 14px; color: var(--ink); background: rgba(20, 16, 12, 0.45); border: 2px solid rgba(244, 232, 200, 0.3); border-radius: 50%; width: 64px; height: 64px; touch-action: none; }
 .b.big { width: 76px; height: 76px; background: rgba(242, 194, 48, 0.3); border-color: rgba(242, 194, 48, 0.6); grid-area: jump; }
 .b[data-action="tool"] { grid-area: tool; }

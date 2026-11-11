@@ -109,7 +109,7 @@
         st.appendChild(row);
       });
       const ab = card.querySelector('.cabil'); ab.innerHTML = '';
-      [[Ch.toolName, Ch.toolDesc], [Ch.allyName, Ch.allyDesc]].forEach(([n, d]) => { const li = document.createElement('li'); li.innerHTML = '<b></b> <span></span>'; li.querySelector('b').textContent = n + ':'; li.querySelector('span').textContent = d; ab.appendChild(li); });
+      [[Ch.toolName, Ch.toolDesc], [Ch.allyName, Ch.allyDesc], [Ch.powerName + ' (F)', Ch.powerDesc]].forEach(([n, d]) => { const li = document.createElement('li'); li.innerHTML = '<b></b> <span></span>'; li.querySelector('b').textContent = n + ':'; li.querySelector('span').textContent = d; ab.appendChild(li); });
       Ch.extra.forEach((e) => { const li = document.createElement('li'); li.textContent = e; ab.appendChild(li); });
       card.classList.toggle('sel', who === selected);
       card.setAttribute('aria-pressed', who === selected ? 'true' : 'false');

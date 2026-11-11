@@ -24,6 +24,7 @@
           <div class="hud-keys">
             <div class="hud-swap" title="Trocar personagem (L)"><kbd>L</kbd><canvas id="partnerPortrait" width="40" height="40"></canvas></div>
             <div class="hud-ally"><kbd>Q</kbd><em id="allyState"></em></div>
+            <div class="hud-ally hud-power"><kbd>F</kbd><em id="powerState"></em></div>
           </div>
         </div>
         <div class="hud-panel hud-right">
@@ -126,6 +127,7 @@
             <tr><th>Usar ferramenta</th><td><kbd>J</kbd> <kbd>X</kbd> (com <kbd>↑</kbd> mira para cima)</td></tr>
             <tr><th>Trocar personagem</th><td><kbd>L</kbd> <kbd>C</kbd></td></tr>
             <tr><th>Aliado</th><td><kbd>Q</kbd> <kbd>V</kbd></td></tr>
+            <tr><th>Poder</th><td><kbd>F</kbd> <kbd>B</kbd> · Piatã: Soco da Terra · Larinha: Feixe do Satélite</td></tr>
             <tr><th>Interagir</th><td><kbd>↑</kbd> ou <kbd>E</kbd></td></tr>
             <tr><th>Pausa</th><td><kbd>Esc</kbd> <kbd>P</kbd></td></tr>
             <tr><th>Observar</th><td>fique parado perto do brilho verde</td></tr>
@@ -154,6 +156,7 @@
     <div class="dpad"><i class="u"></i><i class="d"></i><i class="l"></i><i class="r"></i></div>
     <div class="actions">
       <button data-action="ally" class="b small">Aliado</button>
+      <button data-action="power" class="b power">Poder</button>
       <button data-action="swap" class="b small">Trocar</button>
       <button data-action="tool" class="b">Usar</button>
       <button data-action="jump" class="b big">Pular</button>
@@ -193,6 +196,7 @@
 <script src="src/entities/antagonists/creatures.js"></script>
 <script src="src/entities/antagonists/humans.js"></script>
 <script src="src/entities/antagonists/bosses/draga.js"></script>
+<script src="src/entities/powers.js"></script>
 <script src="src/entities/player.js"></script>
 <script src="src/game/dialogui.js"></script>
 <script src="src/game/hud.js"></script>

@@ -27,6 +27,7 @@ Depois acesse `http://localhost:8000`.
 | Usar ferramenta | J, X (↑ mira para cima) | Usar |
 | Trocar personagem | L, C | Trocar |
 | Aliado | Q, V | Aliado |
+| Poder especial | F, B | Poder |
 | Interagir | ↑ ou E | direcional ↑ |
 | Pausa | Esc, P | botão II |
 
@@ -49,6 +50,8 @@ O jogo também aceita gamepad. O progresso é salvo no navegador a cada marco de
 | Ferramenta | sementes nativas: travam máquinas e brotam no solo degradado | purificador da EcoPack: apaga fogo e limpa água |
 | Aliado (Q) | Ler a trilha: revela passagens escondidas (a arara amplia o efeito) | drone de análise: expõe pontos frágeis e desliga escudos |
 | Exclusivo | salto alto (alcança saliências de 4 tiles), salto entre paredões, chamar o tamanduá | terminais do Projeto Horizonte, lanterna mais forte nas cavernas |
+
+Poderes especiais (tecla F): **Soco da Terra** (Piatã) e **Feixe do Satélite** (Larinha). Ver `docs/PODERES.md`.
 
 Trechos que exigem os dois: a cerca elétrica (terminal), a comporta (alavanca alta + terminal), o riacho do Carimã (sementes no poluidor + purificador na água) e o chefe (drone derruba os escudos, sementes travam as válvulas, purificador apaga as queimadas).
 

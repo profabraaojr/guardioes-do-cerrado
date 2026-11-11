@@ -1,7 +1,7 @@
 [
   {
     "name": "piata",
-    "frames": 51,
+    "frames": 58,
     "frameSize": "64x64",
     "animations": [
       "idle",
@@ -10,6 +10,8 @@
       "jump",
       "fall",
       "tool",
+      "punch",
+      "beam",
       "hurt",
       "death",
       "victory",
@@ -21,7 +23,7 @@
   },
   {
     "name": "larinha",
-    "frames": 51,
+    "frames": 58,
     "frameSize": "64x64",
     "animations": [
       "idle",
@@ -30,6 +32,8 @@
       "jump",
       "fall",
       "tool",
+      "punch",
+      "beam",
       "hurt",
       "death",
       "victory",
@@ -309,11 +313,12 @@
   },
   {
     "name": "brilho",
-    "frames": 9,
+    "frames": 14,
     "frameSize": "32x32",
     "animations": [
       "sparkle",
-      "dust"
+      "dust",
+      "impacto"
     ]
   }
 ]

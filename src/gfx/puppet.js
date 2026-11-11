@@ -44,6 +44,15 @@ GC.Puppet = (function () {
     jump: { n: 2, fps: 8, f: (i) => P({ bob: -2, thF: 55, knF: 70, thB: -5, knB: 55, aF: 150 - i * 10, eF: 20, aB: -40, eB: 40, lean: 4, foot: 3, face: 'focus', wave: 3 + i }) },
     fall: { n: 2, fps: 8, f: (i) => P({ bob: 0, thF: 20, knF: 20, thB: -15, knB: 25, aF: 110 + i * 8, eF: 15, aB: -110 - i * 8, eB: 15, lean: 0, foot: 2, wave: 6 + i }) },
     tool: { n: 3, fps: 14, f: (i) => P({ bob: 0, thF: 18, knF: 10, thB: -14, knB: 8, aF: [-50, 70, 88][i], eF: [80, 20, 0][i], aB: -20, eB: 20, lean: [-4, 6, 8][i], face: 'focus', prop: 'tool' }) },
+    // Soco da Terra (Piatã): preparo, golpe, impacto e recuo
+    punch: { n: 4, fps: 14, loop: false, f: (i) => [
+      P({ lean: -8, thF: 22, knF: 25, thB: -22, knB: 10, aF: -70, eF: 110, aB: 40, eB: 50, face: 'focus', prop: 'fist', tilt: -4 }),
+      P({ lean: 16, bob: 1, thF: 40, knF: 25, thB: -34, knB: 8, aF: 94, eF: 0, aB: -55, eB: 70, face: 'focus', prop: 'fistHit', wave: 2 }),
+      P({ lean: 14, bob: 2, thF: 38, knF: 30, thB: -32, knB: 12, aF: 90, eF: 4, aB: -50, eB: 70, face: 'focus', prop: 'fistHit', wave: 3 }),
+      P({ lean: 4, thF: 20, knF: 12, thB: -16, knB: 8, aF: 40, eF: 50, aB: -20, eB: 30, face: 'focus', prop: 'fist' })
+    ][i] },
+    // Feixe do Satélite (Larinha): ergue o transmissor da EcoPack para o céu
+    beam: { n: 3, fps: 10, f: (i) => P({ lean: -4, tilt: -14, thF: 14, knF: 8, thB: -14, knB: 8, aF: 172 - i * 2, eF: 0, aB: -30, eB: 40, face: 'focus', prop: 'beacon', wave: i }) },
     hurt: { n: 2, fps: 10, f: (i) => P({ bob: 0, thF: 18, knF: 15, thB: -18, knB: 15, aF: 60 + i * 15, eF: 30, aB: -70 - i * 10, eB: 30, lean: -14 - i * 4, tilt: -10, face: 'hurt' }) },
     death: { n: 4, fps: 6, loop: false, f: (i) => [
       P({ thF: 60, knF: 110, thB: 20, knB: 120, bob: 7, lean: 12, aF: 20, aB: -10, face: 'hurt' }),
@@ -219,6 +228,19 @@ GC.Puppet = (function () {
     if (pose.prop === 'tool') {
       if (S.glow) { const a = T(...AF.h); pix.rect(a[0] - 1, a[1] - 1.5, 6, 3, '#3e6676'); pix.rect(a[0] + 4, a[1] - 1, 2, 2, '#6ae8c8'); const b = T(neck[0] - 6, neck[1] + 6); pix.line(b[0], b[1], a[0], a[1], '#24304e'); }
       else { const a = T(AF.h[0] + 1, AF.h[1] - 1); pix.circle(a[0], a[1], 1.8, '#8a5424'); pix.px(a[0], a[1] - 2, '#6ec04a'); }
+    }
+    if (pose.prop === 'fist' || pose.prop === 'fistHit') {
+      const a = T(...AF.h), hit = pose.prop === 'fistHit';
+      pix.circle(a[0], a[1], hit ? 3.6 : 3, S.skin); pix.circle(a[0] - 0.5, a[1] - 0.8, 1.2, '#e8b088');
+      pix.px(a[0] + 1, a[1] + 1, S.skinD);
+      if (hit) { for (const [dx, dy] of [[4, -3], [5, 0], [4, 3], [6, -1], [6, 2]]) pix.px(a[0] + dx, a[1] + dy, '#f8d860'); pix.circle(a[0] + 2, a[1], 1.6, 'rgba(255,240,170,0.9)'); }
+      else { pix.px(a[0] - 3, a[1] - 2, '#9ad860'); pix.px(a[0] + 2, a[1] - 3, '#9ad860'); }
+    }
+    if (pose.prop === 'beacon') {
+      const a = T(AF.h[0], AF.h[1] - 1);
+      pix.rect(a[0] - 1.5, a[1] - 5, 3, 6, '#3e6676'); pix.rect(a[0] - 0.5, a[1] - 7, 1, 2, '#c8ccd8');
+      pix.circle(a[0], a[1] - 8, 1.6 + (pose.wave % 2) * 0.6, '#6ae8f8'); pix.px(a[0], a[1] - 8, '#ffffff');
+      const b = T(neck[0] - 6, neck[1] + 6); pix.line(b[0], b[1], a[0], a[1], '#24304e');
     }
     if (S.tablet) { const a = T(AF.h[0] + 1.5, AF.h[1] - 2); pix.rect(a[0] - 1, a[1] - 3, 4, 5, '#2a2d36'); pix.rect(a[0], a[1] - 2, 2, 3, '#6ae8c8'); }
 

@@ -12,7 +12,7 @@ GC.HUD = (function () {
     els = {
       hud: $('hud'), hearts: $('hearts'), water: $('water'), waterWrap: $('waterWrap'), waterState: $('waterState'), questTitle: $('questTitle'), questSub: $('questSub'),
       charName: $('charName'), charTool: $('charTool'), charPortrait: $('charPortrait'), partnerPortrait: $('partnerPortrait'),
-      ally: $('allyState'), rares: $('rares'), guide: $('guideCount'),
+      ally: $('allyState'), power: $('powerState'), rares: $('rares'), guide: $('guideCount'),
       banner: $('banner'), toasts: $('toasts'),
       bossbar: $('bossbar'), bossName: $('bossName'), bossLabel: $('bossLabel'), bossFill: $('bossFill'),
       card: $('card'), cardTitle: $('cardTitle'), cardSub: $('cardSub'), cardText: $('cardText'), cardTip: $('cardTip'), cardCat: $('cardCat'), cardIcon: $('cardIcon'), cardBtn: $('cardBtn')
@@ -69,6 +69,9 @@ GC.HUD = (function () {
     }
     const allyTxt = g.allyCd > 0 ? Math.ceil(g.allyCd) + 's' : GC.CHARACTERS[ch].allyName;
     if (last.ally !== allyTxt) { last.ally = allyTxt; els.ally.textContent = allyTxt; els.ally.classList.toggle('cool', g.allyCd > 0); }
+    const pc = g.player.powerCd || 0;
+    const powTxt = pc > 0 ? Math.ceil(pc) + 's' : GC.CHARACTERS[ch].powerName;
+    if (last.pow !== powTxt) { last.pow = powTxt; els.power.textContent = powTxt; els.power.classList.toggle('cool', pc > 0); }
     const r = g.save.rares.length + '/5';
     if (last.rares !== r) { last.rares = r; els.rares.textContent = r; }
     const gc = g.save.guide.length + '/' + GC.GUIDE_ORDER.length;

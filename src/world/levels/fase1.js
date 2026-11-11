@@ -29,9 +29,12 @@ GC.Levels.fase1 = {
     B.ent('araraVoo', 0, 28, { x0: 0, x1: 66, lift: 150 });
     B.ent('insetos', 22, 28, {});
     B.ent('insetos', 38, 28, { kind: 'libelula' });
-    B.ent('sign', 8, 28, { title: 'Bem-vindos, guardiões', text: 'Teclado: ← → para andar, ESPAÇO para pular, L para trocar entre Piatã e Larinha.\nToque: direcional à esquerda; Pular, Usar, Trocar e Aliado à direita.\nCada um tem habilidades próprias: Piatã salta mais alto e escala rápido; Larinha opera terminais e tem o purificador de água.' });
+    B.ent('sign', 8, 28, { title: 'Bem-vindos, guardiões', text: 'Teclado: ← → para andar, ESPAÇO para pular, L para trocar entre Piatã e Larinha, F para o poder especial.\nToque: direcional à esquerda; Pular, Usar, Trocar e Aliado à direita.\nCada um tem habilidades próprias: Piatã salta mais alto e escala rápido; Larinha opera terminais e tem o purificador de água.' });
     B.ground(13, 17, 26);
-    seeds(13, 17, 26);
+    seeds(13, 15, 26);
+    B.fill(16, 24, 17, 25, T.CRACKED);
+    B.ent('pickup', 16, 26, { kind: 'seed', lift: 6 });
+    B.ent('talk', 12, 28, { id: 'poderes' });
     B.ent('plant', 19, 28, { kind: 'ipe' });
     // vão
     B.ground(24, 30, 28);
@@ -60,6 +63,8 @@ GC.Levels.fase1 = {
 
     // ═══ B · TRILHA DO CERRADO ═══
     B.ent('station', 71, 24);
+    B.fill(79, 22, 80, 23, T.CRACKED);
+    B.ent('pickup', 79, 24, { kind: 'fruit', lift: 4 });
     B.ent('lobo', 64, 24, { x0: 62, x1: 69 });
     B.ent('sign', 74, 24, { title: 'Posto de brigada', guide: 'domOsorio', text: 'Parque Estadual Dom Osório Stoffel: área protegida de Cerrado vizinha ao Rio Vermelho.\nBrigada mantida por produtores rurais da região e voluntários. Há focos de incêndio na trilha: Larinha apaga o fogo com o purificador (botão Usar). Recarregue em água limpa ou aqui no posto.' });
     B.ent('npc', 77, 24, { dialog: 'brigada', who: 'cida', guides: ['reservaLegal', 'ilpf'], repeat: 'O posto fica aberto. Água não falta para quem cuida da mata.' });
@@ -79,6 +84,8 @@ GC.Levels.fase1 = {
     B.ent('insetos', 110, 28, { kind: 'libelula' });
     B.ent('insetos', 124, 28, {});
     B.ent('tucano', 129, 28, { perches: [0, -9], lift: -66 });
+    B.ent('caixa', 124, 28, { id: 'caixaB1', drop: ['seed', 'seed'] });
+    B.ent('caixa', 125, 28, { id: 'caixaB2', drop: ['fruit'] });
     B.ent('catetos', 145, 28, { x0: 144, x1: 154 });
     B.ent('plant', 150, 28, { kind: 'capim', guide: 'capimDourado' });
     B.ent('araraVoo', 70, 28, { x0: 70, x1: 166, lift: 140 });
@@ -123,6 +130,8 @@ GC.Levels.fase1 = {
     B.ent('talk', 176, 28, { id: 'cliff' });
     B.ent('pickup', 178, 28, { kind: 'fruit', lift: 4 });
     B.ent('capivara', 174, 28, { x0: 171, x1: 180, obsRange: 90 });
+    B.fill(176, 26, 177, 27, T.CRACKED);
+    B.ent('pickup', 176, 28, { kind: 'fruit', lift: 4 });
     // poço 1
     B.ground(181, 199, 34, T.SAND, T.DIRT);
     B.water(181, 28, 199, 33);
@@ -161,9 +170,12 @@ GC.Levels.fase1 = {
     seeds(266, 272, 24, 2);
 
     // ═══ D · CIDADE DE PEDRA ═══
-    B.ent('ema', 266, 24, { x0: 263, x1: 274 });
+    B.ent('ema', 266, 24, { x0: 263, x1: 271 });
     B.ent('sign', 270, 24, { title: 'Cidade de Pedra', guide: 'cidadePedra', text: 'Parque Ecológico João Basso. Formações de arenito esculpidas pela erosão, com abrigos e inscrições rupestres estudadas há décadas.' });
     B.fill(275, 22, 276, 23, T.ROCK);
+    B.fill(272, 22, 273, 23, T.CRACKED);
+    B.ent('pickup', 272, 24, { kind: 'seed', lift: 6 });
+    B.ent('caixa', 283, 24, { id: 'caixaD1', drop: ['seed', 'fruit'] });
     B.fill(279, 20, 280, 23, T.ROCK);
     // caverna
     B.fill(285, 8, 334, 17, T.ROCK);
