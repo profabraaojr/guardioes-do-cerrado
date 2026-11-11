@@ -138,6 +138,7 @@
 
   function pause() {
     if (!game || mode !== 'play') return;
+    if (GC.HUD.cardOpen || GC.HUD.dialogOpen) return; // fecha a ficha ou o diálogo antes
     if (game.player.spraying) { game.player.spraying = false; A.spray(false); }
     setMode('pause'); show('pauseScreen');
     $('btnSound').textContent = A.muted ? 'Som: desligado' : 'Som: ligado';

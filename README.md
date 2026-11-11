@@ -4,6 +4,12 @@ Jogo de plataforma 2D com rolagem lateral, ambientado em Rondonópolis (MT). Est
 
 O jogo usa HTML5 Canvas e JavaScript puro, sem dependências nem etapa de compilação.
 
+## Jogar online
+
+**https://profabraaojr.github.io/guardioes-do-cerrado/**
+
+Funciona no navegador do computador (teclado ou controle) e do celular (controles de toque). Nada precisa ser instalado. A cada envio para a branch `main`, o GitHub Actions publica a nova versão automaticamente (`.github/workflows/pages.yml`).
+
 ## Como jogar
 
 Abra `index.html` em um navegador moderno. Para evitar restrições de arquivos locais, prefira um servidor simples:
