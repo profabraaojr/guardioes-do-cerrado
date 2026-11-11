@@ -373,7 +373,7 @@
       const dark = this.level.inDark(p.cx, p.cy);
       this.darkA = U.approach(this.darkA, dark ? 0.86 : 0, dt * 1.5);
       if (!this.bossActive && !this.victory && this.zone) GC.Audio.music(dark ? 'cave' : this.zone.music);
-      GC.Audio.ambient(dt, dark ? 'cave' : (this.zone ? this.zone.ambient : 'day'));
+      GC.Soundscape.update(dt, dark ? 'caverna' : this.healed ? 'healed' : (this.zone ? this.zone.theme : 'cerrado'), this);
 
       // início do chefe
       const A = this.level.arena;

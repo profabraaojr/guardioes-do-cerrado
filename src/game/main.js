@@ -210,6 +210,17 @@
   click('btnResume', resume);
   click('btnPauseGuide', () => openGuide('pause'));
   click('btnSound', () => { const m = A.toggleMute(); $('btnSound').textContent = m ? 'Som: desligado' : 'Som: ligado'; });
+  // mixer: música e sons da natureza em três níveis
+  const MUS = [[0.24, 'média'], [0.4, 'alta'], [0.1, 'baixa'], [0, 'desligada']];
+  const NAT = [[0.75, 'altos'], [1, 'muito altos'], [0.4, 'baixos'], [0, 'desligados']];
+  const label = () => {
+    const m = MUS.find(([v]) => Math.abs(v - A.mix.music) < 0.01) || MUS[0], n = NAT.find(([v]) => Math.abs(v - A.mix.nature) < 0.01) || NAT[0];
+    $('btnMusic').textContent = 'Música: ' + m[1]; $('btnNature').textContent = 'Sons da natureza: ' + n[1];
+  };
+  const cycle = (list, key) => { const i = list.findIndex(([v]) => Math.abs(v - A.mix[key]) < 0.01); A.setMix(key, list[(i + 1) % list.length][0]); label(); };
+  click('btnMusic', () => cycle(MUS, 'music'));
+  click('btnNature', () => { cycle(NAT, 'nature'); GC.Soundscape.play('bemtevi', 0, 1); });
+  label();
   click('btnRestart', () => { resume(); game.onRespawn(); });
   click('btnQuit', goTitle);
   click('btnGuideBack', closeGuide);
@@ -252,7 +263,7 @@
       if (GC.HUD.cardOpen) { if (I.pressed('confirm') || I.pressed('pause')) GC.HUD.closeCard(); }
       else if (I.pressed('pause')) { if (mode === 'guide') closeGuide(); else goTitle(); }
     }
-    if (mode === 'intro' || mode === 'title' || mode === 'select') A.ambient(dt, 'day');
+    if (mode === 'intro' || mode === 'title' || mode === 'select' || mode === 'ending') GC.Soundscape.update(dt, mode === 'ending' ? 'healed' : 'title', null);
   }
 
   function render() {

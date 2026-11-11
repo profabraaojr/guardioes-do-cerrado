@@ -4,6 +4,10 @@
 GC.Audio = (function () {
   let ctx = null, master = null, musicBus = null, sfxBus = null, noiseBuf = null;
   let muted = false;
+  // mixer: volumes de música e de natureza (lembrados no navegador)
+  const MIX_KEY = 'guardioes-som';
+  let mix = { music: 0.24, nature: 0.75 };
+  try { Object.assign(mix, JSON.parse(localStorage.getItem(MIX_KEY) || '{}')); } catch (e) {}
   let music = { name: null, step: 0, next: 0, timer: null };
   let sprayNode = null;
 
@@ -13,11 +17,12 @@ GC.Audio = (function () {
     if (!AC) return;
     ctx = new AC();
     master = ctx.createGain(); master.gain.value = muted ? 0 : 0.8; master.connect(ctx.destination);
-    musicBus = ctx.createGain(); musicBus.gain.value = 0.32; musicBus.connect(master);
+    musicBus = ctx.createGain(); musicBus.gain.value = mix.music; musicBus.connect(master);
     sfxBus = ctx.createGain(); sfxBus.gain.value = 0.7; sfxBus.connect(master);
     noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 1.5, ctx.sampleRate);
     const d = noiseBuf.getChannelData(0);
     for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    if (GC.Soundscape) { GC.Soundscape.init(ctx, master); GC.Soundscape.setLevel(mix.nature); }
   }
 
   function tone({ type = 'square', f = 440, f2 = null, t = 0, dur = 0.12, vol = 0.3, bus = sfxBus, attack = 0.005, detune = 0 }) {
@@ -156,9 +161,10 @@ GC.Audio = (function () {
     }
   }
 
-  // ambiente: pássaros esporádicos e água corrente
+  // (substituído pela paisagem sonora em core/soundscape.js; mantido por compatibilidade)
   let ambientTimer = 0;
   function ambient(dt, kind) {
+    if (GC.Soundscape) return;
     if (!ctx || muted) return;
     ambientTimer -= dt;
     if (ambientTimer > 0) return;
@@ -198,6 +204,15 @@ GC.Audio = (function () {
         s.connect(f); f.connect(g); g.connect(sfxBus); s.start();
         sprayNode = s;
       } else if (!on && sprayNode) { sprayNode.stop(); sprayNode = null; }
+    },
+    get mix() { return mix; },
+    // usado por testes para gravar amostras da saída de áudio
+    tap() { if (!ctx) return null; const d = ctx.createMediaStreamDestination(); master.connect(d); return d; },
+    setMix(key, v) {
+      mix[key] = v;
+      try { localStorage.setItem(MIX_KEY, JSON.stringify(mix)); } catch (e) {}
+      if (key === 'music' && musicBus) musicBus.gain.setTargetAtTime(v, ctx.currentTime, 0.2);
+      if (key === 'nature' && GC.Soundscape) GC.Soundscape.setLevel(v);
     },
     toggleMute() {
       muted = !muted;
