@@ -60,7 +60,9 @@ css/style.css         interface responsiva (paisagem e retrato)
 src/core/             configuração, utilidades, entrada, áudio procedural, salvamento
 src/data/             Guia de Campo, personagens, diálogos
 src/world/            tiles, estrutura de fase, fundos em paralaxe, fases (levels/)
-src/gfx/              sprites, fonte bitmap, retratos
+src/gfx/              spritesheets (boneco articulado, flora, fauna, objetos), fonte bitmap, retratos
+assets/sprites/       PNG + JSON exportados (editáveis; o jogo os carrega no início)
+tools/                exportação das spritesheets
 src/entities/         física, guardião, projéteis, objetos, fauna, máquinas, Colosso
 src/entities/antagonists/  registro modular, infratores, criaturas, chefes (draga)
 src/game/             diálogos (canvas), HUD, núcleo da partida, orquestração
@@ -86,5 +88,6 @@ Pontos principais:
 ## Documentação complementar
 
 - `docs/NARRATIVA.md`: personagens, diretrizes narrativas e padrão visual dos diálogos.
+- `docs/VISUAL.md`: revisão visual, pipeline de spritesheets e pendências.
 - `docs/ANTAGONISTAS.md`: sistema de antagonistas (humanos, criaturas, máquinas e chefes) e como estendê-lo.
 - `docs/PESQUISA.md`: fontes consultadas para os lugares e as espécies.
