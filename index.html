@@ -1,0 +1,190 @@
+<meta charset="utf-8">
+<title>Guardiões do Cerrado</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Plataforma 2D de aventura ambiental em Rondonópolis (MT): a jornada de Piatã e Larinha.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="css/style.css">
+
+<div id="app">
+  <div id="stage">
+    <canvas id="screen" width="480" height="270" aria-label="Tela do jogo Guardiões do Cerrado"></canvas>
+
+    <!-- HUD -->
+    <div id="hud" hidden>
+      <div class="hud-top">
+        <div class="hud-left">
+          <div id="hearts" aria-label="Vitalidade"></div>
+          <div id="waterWrap" class="waterbar"><span>Água</span><b><i id="water"></i></b></div>
+        </div>
+        <div class="hud-char">
+          <canvas id="charPortrait" width="28" height="28"></canvas>
+          <div class="hud-char-txt"><b id="charName">Piatã</b><small id="charTool"></small></div>
+          <div class="hud-swap" title="Trocar personagem (L)"><span>L</span><canvas id="partnerPortrait" width="28" height="28"></canvas></div>
+          <div class="hud-ally"><span>Q</span><em id="allyState"></em></div>
+        </div>
+        <div class="hud-right">
+          <span class="cnt rare" title="Sementes raras"><i></i><b id="rares">0/5</b></span>
+          <span class="cnt guide" title="Guia de Campo"><i></i><b id="guideCount">0</b></span>
+          <button id="pauseBtn" type="button" aria-label="Pausar">II</button>
+        </div>
+      </div>
+      <div id="bossbar" hidden><b id="bossName"></b><span id="bossLabel"></span><i><em id="bossFill"></em></i></div>
+      <div id="banner"></div>
+      <div id="toasts" aria-live="polite"></div>
+    </div>
+    <canvas id="ui" aria-hidden="true"></canvas>
+
+    <!-- Ficha -->
+    <div id="card" hidden role="dialog" aria-modal="true" aria-labelledby="cardTitle">
+      <div class="card-in">
+        <small id="cardCat"></small>
+        <canvas id="cardIcon" width="160" height="96"></canvas>
+        <h2 id="cardTitle"></h2>
+        <p id="cardSub" class="sci"></p>
+        <p id="cardText"></p>
+        <p id="cardTip" class="tip"></p>
+        <button id="cardBtn" type="button" class="btn primary">Continuar</button>
+      </div>
+    </div>
+
+    <!-- Telas -->
+    <div id="screens">
+      <section id="titleScreen" class="screen" hidden>
+        <div class="title-wrap">
+          <p class="eyebrow">Capítulo 1 · O chamado de Rondonópolis</p>
+          <h1><span>Guardiões</span><span class="do">do</span><span>Cerrado</span></h1>
+          <p class="subtitle">A jornada de Piatã e Larinha</p>
+          <nav class="menu">
+            <button id="btnNew" type="button" class="btn primary">Novo jogo</button>
+            <button id="btnContinue" type="button" class="btn" hidden>Continuar</button>
+            <button id="btnGuide" type="button" class="btn">Guia de Campo</button>
+            <button id="btnControls" type="button" class="btn">Controles</button>
+          </nav>
+          <p class="motto">“Não precisamos destruir a natureza para vencer uma batalha. Precisamos aprender a protegê-la.”</p>
+        </div>
+      </section>
+
+      <section id="selectScreen" class="screen" hidden>
+        <div class="select-wrap">
+          <h2>Quem começa a trilha?</h2>
+          <p class="lead">Os dois seguem juntos. Troque de personagem a qualquer momento com <kbd>L</kbd> ou o botão <b>Trocar</b>: alguns desafios só se resolvem com a habilidade de cada um.</p>
+          <div class="chars">
+            <button type="button" class="char-card" data-char="piata" aria-pressed="true">
+              <canvas width="56" height="56"></canvas>
+              <span class="cname"></span><span class="crole"></span>
+              <span class="cbio"></span>
+              <span class="cstats"></span>
+              <ul class="cabil"></ul>
+            </button>
+            <button type="button" class="char-card" data-char="larinha" aria-pressed="false">
+              <canvas width="56" height="56"></canvas>
+              <span class="cname"></span><span class="crole"></span>
+              <span class="cbio"></span>
+              <span class="cstats"></span>
+              <ul class="cabil"></ul>
+            </button>
+          </div>
+          <div class="row">
+            <button id="btnSelectBack" type="button" class="btn">Voltar</button>
+            <button id="btnStart" type="button" class="btn primary">Começar</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="pauseScreen" class="screen" hidden>
+        <div class="panel">
+          <h2>Pausa</h2>
+          <button id="btnResume" type="button" class="btn primary">Continuar</button>
+          <button id="btnPauseGuide" type="button" class="btn">Guia de Campo</button>
+          <button id="btnSound" type="button" class="btn">Som: ligado</button>
+          <button id="btnRestart" type="button" class="btn">Voltar ao último marco</button>
+          <button id="btnQuit" type="button" class="btn">Menu principal</button>
+        </div>
+      </section>
+
+      <section id="guideScreen" class="screen" hidden>
+        <div class="guide-wrap">
+          <header><h2>Guia de Campo</h2><span id="guideProgress"></span></header>
+          <div id="guideGrid"></div>
+          <button id="btnGuideBack" type="button" class="btn">Voltar</button>
+        </div>
+      </section>
+
+      <section id="controlsScreen" class="screen" hidden>
+        <div class="panel wide">
+          <h2>Controles</h2>
+          <table class="keys">
+            <tr><th>Andar</th><td><kbd>←</kbd> <kbd>→</kbd> ou <kbd>A</kbd> <kbd>D</kbd></td></tr>
+            <tr><th>Pular · nadar</th><td><kbd>Espaço</kbd> <kbd>K</kbd> <kbd>Z</kbd></td></tr>
+            <tr><th>Escalar</th><td>segure a direção contra o paredão; <kbd>↑</kbd> <kbd>↓</kbd></td></tr>
+            <tr><th>Deslizar · andar abaixado</th><td>correndo, <kbd>↓</kbd> · segure <kbd>↓</kbd> e ande</td></tr>
+            <tr><th>Usar ferramenta</th><td><kbd>J</kbd> <kbd>X</kbd> (com <kbd>↑</kbd> mira para cima)</td></tr>
+            <tr><th>Trocar personagem</th><td><kbd>L</kbd> <kbd>C</kbd></td></tr>
+            <tr><th>Aliado</th><td><kbd>Q</kbd> <kbd>V</kbd></td></tr>
+            <tr><th>Interagir</th><td><kbd>↑</kbd> ou <kbd>E</kbd></td></tr>
+            <tr><th>Pausa</th><td><kbd>Esc</kbd> <kbd>P</kbd></td></tr>
+            <tr><th>Observar</th><td>fique parado perto do brilho verde</td></tr>
+          </table>
+          <p class="note">Também funciona com controle (gamepad) e com toque na tela.</p>
+          <button id="btnControlsBack" type="button" class="btn">Voltar</button>
+        </div>
+      </section>
+
+      <section id="endScreen" class="screen" hidden>
+        <div class="panel wide end">
+          <p class="eyebrow">Capítulo 1 concluído</p>
+          <h2>A clareira voltou a florescer</h2>
+          <table id="endStats" class="stats"></table>
+          <p class="next">Próximo capítulo: <b>Os segredos da Chapada</b>. Depois, Pantanal, Nobres e a instalação do NEXUS.</p>
+          <p class="motto">“Não precisamos destruir a natureza para vencer uma batalha. Precisamos aprender a protegê-la.”</p>
+          <button id="btnEndTitle" type="button" class="btn primary">Menu principal</button>
+        </div>
+      </section>
+    </div>
+    <button id="btnSkipIntro" type="button" class="skip">Pular abertura</button>
+  </div>
+
+  <!-- Controles de toque -->
+  <div id="touch" aria-hidden="true">
+    <div class="dpad"><i class="u"></i><i class="d"></i><i class="l"></i><i class="r"></i></div>
+    <div class="actions">
+      <button data-action="ally" class="b small">Aliado</button>
+      <button data-action="swap" class="b small">Trocar</button>
+      <button data-action="tool" class="b">Usar</button>
+      <button data-action="jump" class="b big">Pular</button>
+    </div>
+  </div>
+</div>
+
+<script src="src/core/config.js"></script>
+<script src="src/core/util.js"></script>
+<script src="src/core/input.js"></script>
+<script src="src/core/audio.js"></script>
+<script src="src/core/save.js"></script>
+<script src="src/data/guide.js"></script>
+<script src="src/data/characters.js"></script>
+<script src="src/data/dialogs.js"></script>
+<script src="src/world/tiles.js"></script>
+<script src="src/world/level.js"></script>
+<script src="src/world/background.js"></script>
+<script src="src/world/levels/fase1.js"></script>
+<script src="src/gfx/sprites.js"></script>
+<script src="src/gfx/font.js"></script>
+<script src="src/gfx/portraits.js"></script>
+<script src="src/entities/physics.js"></script>
+<script src="src/entities/projectiles.js"></script>
+<script src="src/entities/items.js"></script>
+<script src="src/entities/fauna.js"></script>
+<script src="src/entities/enemies.js"></script>
+<script src="src/entities/boss.js"></script>
+<script src="src/entities/antagonists/base.js"></script>
+<script src="src/entities/antagonists/creatures.js"></script>
+<script src="src/entities/antagonists/humans.js"></script>
+<script src="src/entities/antagonists/bosses/draga.js"></script>
+<script src="src/entities/player.js"></script>
+<script src="src/game/dialogui.js"></script>
+<script src="src/game/hud.js"></script>
+<script src="src/game/game.js"></script>
+<script src="src/game/main.js"></script>
