@@ -42,7 +42,7 @@ GC.Input = (function () {
       const a = el.dataset.action;
       el.addEventListener('pointerdown', (e) => {
         e.preventDefault();
-        el.setPointerCapture && el.setPointerCapture(e.pointerId);
+        try { el.setPointerCapture && el.setPointerCapture(e.pointerId); } catch (err) { /* ponteiro já liberado */ }
         active.set(e.pointerId, a); setAct(a, true); el.classList.add('on');
         lastDevice = 'touch';
       });
@@ -71,7 +71,7 @@ GC.Input = (function () {
         pad.dataset.dir = dirs.filter((d) => src.touch[d]).join(' ');
       };
       const end = () => { dirs.forEach((d) => (src.touch[d] = false)); pad.dataset.dir = ''; };
-      pad.addEventListener('pointerdown', (e) => { e.preventDefault(); pad.setPointerCapture(e.pointerId); lastDevice = 'touch'; update(e); });
+      pad.addEventListener('pointerdown', (e) => { e.preventDefault(); try { pad.setPointerCapture(e.pointerId); } catch (err) { /* ponteiro já liberado */ } lastDevice = 'touch'; update(e); });
       pad.addEventListener('pointermove', (e) => { if (e.buttons || e.pointerType === 'touch') update(e); });
       pad.addEventListener('pointerup', end);
       pad.addEventListener('pointercancel', end);

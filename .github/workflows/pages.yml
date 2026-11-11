@@ -1,0 +1,37 @@
+# Publicação automática no GitHub Pages.
+# A cada envio para a branch main, monta o site (tools/build_pages.py) e grava o
+# resultado na branch gh-pages, que é a fonte do GitHub Pages deste repositório.
+name: Publicar no GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publicar-pages
+  cancel-in-progress: true
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Montar o site
+        run: python3 tools/build_pages.py
+
+      - name: Gravar na branch gh-pages
+        env:
+          TOKEN: ${{ github.token }}
+        run: |
+          cd _site
+          git init -q -b gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -qm "Publicação de ${GITHUB_SHA::7}"
+          git push --force "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
