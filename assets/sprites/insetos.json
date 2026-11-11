@@ -1,0 +1,103 @@
+{
+  "image": "insetos.png",
+  "frameWidth": 16,
+  "frameHeight": 16,
+  "pivot": {
+    "x": 8,
+    "y": 8
+  },
+  "scale": 2,
+  "hitbox": null,
+  "animations": {
+    "amarela": {
+      "fps": 10,
+      "loop": true,
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        },
+        {
+          "x": 16,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      ]
+    },
+    "azul": {
+      "fps": 10,
+      "loop": true,
+      "frames": [
+        {
+          "x": 32,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        },
+        {
+          "x": 48,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      ]
+    },
+    "laranja": {
+      "fps": 10,
+      "loop": true,
+      "frames": [
+        {
+          "x": 64,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        },
+        {
+          "x": 80,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      ]
+    },
+    "fuligem": {
+      "fps": 12,
+      "loop": true,
+      "frames": [
+        {
+          "x": 96,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        },
+        {
+          "x": 112,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      ]
+    },
+    "libelula": {
+      "fps": 18,
+      "loop": true,
+      "frames": [
+        {
+          "x": 0,
+          "y": 16,
+          "w": 16,
+          "h": 16
+        },
+        {
+          "x": 16,
+          "y": 16,
+          "w": 16,
+          "h": 16
+        }
+      ]
+    }
+  }
+}

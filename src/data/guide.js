@@ -69,6 +69,46 @@ GC.GUIDE = {
     text: 'Ave corredora das áreas abertas do Cerrado. Seu canto alto pode ser ouvido a grande distância, e ela se alimenta de insetos, pequenos lagartos e serpentes.',
     tip: 'Áreas abertas do Cerrado também são habitat: campos nativos não são "terrenos vazios".'
   },
+  ema: {
+    cat: 'Fauna', name: 'Ema', sci: 'Rhea americana', icon: 'ema',
+    text: 'Maior ave do Brasil. Não voa, mas corre muito rápido pelos campos abertos. Quem choca os ovos e cuida dos filhotes é o macho.',
+    tip: 'Campos nativos são o habitat da ema: conservá-los é tão importante quanto conservar as matas.'
+  },
+  loboGuara: {
+    cat: 'Fauna', name: 'Lobo-guará', sci: 'Chrysocyon brachyurus', icon: 'lobo',
+    text: 'Maior canídeo da América do Sul. Tímido e solitário, come pequenos animais e muitos frutos, como a lobeira, e espalha as sementes pelo Cerrado. É classificado como vulnerável no Brasil.',
+    tip: 'Ele evita pessoas. Se avistar um, observe de longe e não ofereça comida.'
+  },
+  tucanucu: {
+    cat: 'Fauna', name: 'Tucanuçu', sci: 'Ramphastos toco', icon: 'tucano',
+    text: 'Maior espécie de tucano. O bico enorme é leve por dentro e ajuda a controlar a temperatura do corpo. Come frutos e dispersa sementes de muitas árvores.',
+    tip: 'Árvores nativas com frutos atraem tucanos e outras aves também nas cidades.'
+  },
+  cateto: {
+    cat: 'Fauna', name: 'Cateto', sci: 'Pecari tajacu', icon: 'cateto',
+    text: 'Vive em bandos e tem uma faixa clara em volta do pescoço. Ao fuçar o chão em busca de raízes e frutos, revolve o solo e ajuda a espalhar sementes.',
+    tip: 'Bandos de catetos precisam de áreas conectadas de vegetação para circular.'
+  },
+  veadoCampeiro: {
+    cat: 'Fauna', name: 'Veado-campeiro', sci: 'Ozotoceros bezoarticus', icon: 'veado',
+    text: 'Vive nos campos abertos do Cerrado e do Pantanal. Fica alerta ao menor sinal de perigo e foge em saltos. É sensível à perda dos campos nativos.',
+    tip: 'Ande devagar e em silêncio para observar animais de campo aberto.'
+  },
+  tatuCanastra: {
+    cat: 'Fauna', name: 'Tatu-canastra', sci: 'Priodontes maximus', icon: 'tatu',
+    text: 'Maior tatu do mundo. Cava tocas enormes que depois servem de abrigo para muitos outros animais. É raro de ver e está ameaçado de extinção.',
+    tip: 'Tocas no chão do Cerrado podem abrigar várias espécies: não as destrua.'
+  },
+  cagaita: {
+    cat: 'Flora', name: 'Cagaita', sci: 'Eugenia dysenterica', icon: 'cagaita',
+    text: 'Árvore do Cerrado de frutos amarelos e ácidos, consumidos frescos ou em sucos e doces. Comidos em excesso, têm efeito laxativo, o que explica o nome.',
+    tip: 'Frutos nativos como cagaita, pequi e buriti movimentam a economia de comunidades do Cerrado.'
+  },
+  capimDourado: {
+    cat: 'Flora', name: 'Capim-dourado', sci: 'Syngonanthus nitens', icon: 'capim',
+    text: 'Planta de campos úmidos do Cerrado cujas hastes douradas e brilhantes são usadas em artesanato. A colheita é feita na época certa para a planta se renovar.',
+    tip: 'Compre artesanato de capim-dourado de fontes que respeitam o período de colheita.'
+  },
   perereca: {
     cat: 'Fauna', name: 'Perereca', sci: 'Família Hylidae', icon: 'perereca',
     text: 'Anfíbios respiram também pela pele, por isso são muito sensíveis à poluição da água. A presença deles indica ambientes saudáveis.',

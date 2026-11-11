@@ -32,7 +32,7 @@
       this.callT -= dt;
       if (this.callT <= 0 && Math.abs(p.cx - this.cx) < 260) { GC.Audio.play('seriema'); this.callT = 7 + Math.random() * 6; }
     }
-    draw(ctx, cam) { Art.seriema(ctx, this.sx(cam), this.sy(cam), this.dir, this.t, this.moving); }
+    draw(ctx, cam) { GC.Sheets.draw(ctx, 'seriema', this.callT > 6.2 ? 'call' : this.moving ? 'walk' : 'idle', this.t, this.cx - cam.x, this.bottom - cam.y, this.dir < 0); }
   };
 
   GC.Ent.tamandua = class Tamandua extends Walker {
@@ -61,7 +61,7 @@
         }
       }
     }
-    draw(ctx, cam) { Art.tamandua(ctx, this.sx(cam), this.sy(cam), this.dir, this.t, this.moving, this.task && this.task.phase === 'dig'); }
+    draw(ctx, cam) { GC.Sheets.draw(ctx, 'tamandua', this.task && this.task.phase === 'dig' ? 'dig' : this.moving ? 'walk' : 'idle', this.t, this.cx - cam.x, this.bottom - cam.y, this.dir < 0); }
   };
 
   GC.Ent.capivara = class Capivara extends Walker {
@@ -228,7 +228,7 @@
       this.py = U.lerp(this.py, ty, Math.min(1, dt * 3));
       this.dir = tx > this.px ? 1 : -1;
     }
-    draw(ctx, cam) { Art.arara(ctx, Math.round(this.px - cam.x), Math.round(this.py - cam.y), this.dir, this.t, true); }
+    draw(ctx, cam) { GC.Sheets.draw(ctx, 'arara', 'fly', this.t, this.px - cam.x, this.py - cam.y + 6, this.dir < 0); }
   };
 
   // Drone de análise da EcoPack

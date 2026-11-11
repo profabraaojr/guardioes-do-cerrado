@@ -296,7 +296,7 @@
     GC.Art.init();
     GC.spriteSource = await GC.Sheets.preload();
     GC.Tiles.pregen();
-    GC.Background.pregen();
+    GC.Background.pregenAsync();
     GC.DialogUI.init($('ui'));
     GC.HUD.init();
     I.bindTouch($('touch'));

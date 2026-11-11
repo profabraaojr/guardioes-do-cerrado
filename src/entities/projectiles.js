@@ -147,10 +147,16 @@ GC.FX = class FX {
         ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1;
         continue;
       }
-      ctx.globalAlpha = q.type === 'smoke' ? a * 0.8 : a;
+      ctx.globalAlpha = q.type === 'smoke' ? a * 0.7 : a;
       ctx.fillStyle = q.color;
-      const s = q.type === 'smoke' ? Math.round(q.size + (1 - q.life / q.max) * 4) : q.size;
-      ctx.fillRect(x - (s >> 1), y - (s >> 1), s, s);
+      if (q.type === 'smoke') {
+        const r = (q.size + (1 - q.life / q.max) * 5) / 2;
+        ctx.beginPath(); ctx.arc(q.x - cam.x, q.y - cam.y, r, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.12)'; ctx.beginPath(); ctx.arc(q.x - cam.x - r * 0.3, q.y - cam.y - r * 0.3, r * 0.5, 0, Math.PI * 2); ctx.fill();
+      } else {
+        const s = q.size;
+        ctx.fillRect(q.x - cam.x - s / 2, q.y - cam.y - s / 2, s, s);
+      }
     }
     ctx.globalAlpha = 1;
   }

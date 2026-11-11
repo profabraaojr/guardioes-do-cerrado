@@ -56,11 +56,7 @@ GC.Ent.pickup = class Pickup extends Thing {
     g.collect(this);
   }
   draw(ctx, cam) {
-    const x = this.sx(cam), y = this.sy(cam);
-    if (this.kind === 'seed') GC.Art.seed(ctx, x, y, this.t);
-    else if (this.kind === 'rare') GC.Art.rare(ctx, x, y, this.t);
-    else if (this.kind === 'fruit') GC.Art.fruit(ctx, x, y, this.t);
-    else if (this.kind === 'heartUp') GC.Art.heartUp(ctx, x, y, this.t);
+    GC.Sheets.draw(ctx, 'itens', this.kind, this.t, this.cx - cam.x, this.bottom - cam.y + 1, false);
   }
 };
 

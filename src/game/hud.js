@@ -10,7 +10,7 @@ GC.HUD = (function () {
 
   function init() {
     els = {
-      hud: $('hud'), hearts: $('hearts'), water: $('water'), waterWrap: $('waterWrap'),
+      hud: $('hud'), hearts: $('hearts'), water: $('water'), waterWrap: $('waterWrap'), waterState: $('waterState'), questTitle: $('questTitle'), questSub: $('questSub'),
       charName: $('charName'), charTool: $('charTool'), charPortrait: $('charPortrait'), partnerPortrait: $('partnerPortrait'),
       ally: $('allyState'), rares: $('rares'), guide: $('guideCount'),
       banner: $('banner'), toasts: $('toasts'),
@@ -18,6 +18,8 @@ GC.HUD = (function () {
       card: $('card'), cardTitle: $('cardTitle'), cardSub: $('cardSub'), cardText: $('cardText'), cardTip: $('cardTip'), cardCat: $('cardCat'), cardIcon: $('cardIcon'), cardBtn: $('cardBtn')
     };
     els.cardBtn.addEventListener('click', () => closeCard());
+    // ícones em pixel art (16×16) aplicados como imagem nítida
+    document.querySelectorAll('.ico[data-ico]').forEach((el) => (el.style.backgroundImage = 'url(' + icon(el.dataset.ico) + ')'));
   }
 
   // retrato 40×40 copiado 1:1; o CSS amplia apenas em múltiplos inteiros
@@ -37,12 +39,24 @@ GC.HUD = (function () {
       els.hearts.innerHTML = '';
       for (let i = 0; i < max; i++) {
         const s = document.createElement('i');
-        s.className = 'leaf' + (i < g.hearts ? ' full' : '');
+        s.className = 'leaf';
+        s.style.backgroundImage = 'url(' + icon(i < g.hearts ? 'leaf' : 'leafEmpty') + ')';
         els.hearts.appendChild(s);
       }
+      els.hearts.setAttribute('aria-label', 'Vitalidade ' + g.hearts + ' de ' + max);
     }
     const w = Math.round(g.water);
-    if (last.water !== w) { last.water = w; els.water.style.width = (w / GC.CFG.WATER_TANK * 100) + '%'; els.waterWrap.classList.toggle('low', w < 20); }
+    if (last.water !== w) {
+      last.water = w;
+      const pct = w / GC.CFG.WATER_TANK;
+      const st = pct >= 0.6 ? 'cheia' : pct > 0.02 ? (pct >= 0.2 ? 'media' : 'baixa') : 'vazia';
+      els.water.style.width = (pct * 100) + '%';
+      els.waterWrap.dataset.state = st;
+      els.waterState.textContent = { cheia: 'Cheia', media: 'Média', baixa: 'Baixa', vazia: 'Vazia' }[st];
+    }
+    const z = g.zone;
+    const zk = z ? z.id : '';
+    if (last.zone !== zk && z) { last.zone = zk; els.questTitle.textContent = z.name; els.questSub.textContent = z.sub; }
     const ch = g.player.char;
     if (last.char !== ch) {
       last.char = ch;
@@ -75,6 +89,27 @@ GC.HUD = (function () {
   }
 
   function reset() { last = {}; }
+
+  // ——— Ícones do HUD (pixel art, 16×16) ———
+  const icons = {};
+  function icon(name) {
+    if (icons[name]) return icons[name];
+    const P = new GC.Pix(16, 16);
+    switch (name) {
+      case 'leaf': case 'leafEmpty': {
+        const full = name === 'leaf';
+        P.poly([[2, 14], [2, 6], [7, 2], [14, 2], [14, 8], [9, 14]], full ? '#58c040' : '#2a3a2a');
+        P.poly([[3, 12], [3, 7], [7, 4], [11, 4], [5, 10]], full ? '#8ee060' : '#3a4a3a');
+        P.line(3, 13, 12, 4, full ? '#2e7a24' : '#1a221a');
+        P.outline('#0e1408'); break;
+      }
+      case 'drop': P.poly([[8, 1], [13, 9], [12, 13], [8, 15], [4, 13], [3, 9]], '#3aa0e8'); P.ellipse(8, 11, 4.2, 3.6, '#3aa0e8'); P.rect(6, 6, 2, 4, '#bfe8ff'); P.outline('#0a1a2e'); break;
+      case 'rare': P.circle(8, 8, 7, 'rgba(255,220,90,0.35)'); P.ellipse(8, 10, 4, 5, '#d8961e'); P.ellipse(7, 8, 2, 2, '#fde070'); P.line(8, 5, 9, 1, '#3e9a3a'); P.rect(9, 1, 4, 2, '#6ac84a'); P.outline('#2a1a04'); break;
+      case 'book': P.rect(2, 3, 12, 11, '#3a8a3a'); P.rect(3, 4, 10, 9, '#5ab84a'); P.rect(7, 3, 2, 11, '#2a6a2a'); P.rect(4, 6, 2, 1, '#e8f8d0'); P.rect(10, 6, 2, 1, '#e8f8d0'); P.rect(4, 8, 2, 1, '#e8f8d0'); P.rect(10, 8, 2, 1, '#e8f8d0'); P.outline('#0e1a0a'); break;
+    }
+    icons[name] = P.c.toDataURL();
+    return icons[name];
+  }
 
   function banner(title, sub) {
     els.banner.innerHTML = '<b></b><small></small>';

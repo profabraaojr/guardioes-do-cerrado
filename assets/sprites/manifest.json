@@ -134,5 +134,186 @@
       "crouch",
       "talk"
     ]
+  },
+  {
+    "name": "trees",
+    "frames": 10,
+    "frameSize": "128x160",
+    "animations": [
+      "pequi",
+      "ipe",
+      "buriti",
+      "lobeira",
+      "cagaita"
+    ]
+  },
+  {
+    "name": "scenery",
+    "frames": 15,
+    "frameSize": "32x32",
+    "animations": [
+      "tuft",
+      "capim",
+      "shrub",
+      "flower",
+      "rock",
+      "front"
+    ]
+  },
+  {
+    "name": "ema",
+    "frames": 10,
+    "frameSize": "64x80",
+    "animations": [
+      "idle",
+      "walk",
+      "run"
+    ]
+  },
+  {
+    "name": "seriema",
+    "frames": 8,
+    "frameSize": "48x64",
+    "animations": [
+      "idle",
+      "walk",
+      "call"
+    ]
+  },
+  {
+    "name": "tamandua",
+    "frames": 8,
+    "frameSize": "80x48",
+    "animations": [
+      "idle",
+      "walk",
+      "dig"
+    ]
+  },
+  {
+    "name": "lobo",
+    "frames": 6,
+    "frameSize": "72x64",
+    "animations": [
+      "idle",
+      "trot"
+    ]
+  },
+  {
+    "name": "tucano",
+    "frames": 4,
+    "frameSize": "48x40",
+    "animations": [
+      "perch",
+      "fly"
+    ]
+  },
+  {
+    "name": "cateto",
+    "frames": 6,
+    "frameSize": "48x32",
+    "animations": [
+      "idle",
+      "walk"
+    ]
+  },
+  {
+    "name": "veado",
+    "frames": 7,
+    "frameSize": "64x56",
+    "animations": [
+      "graze",
+      "alert",
+      "run"
+    ]
+  },
+  {
+    "name": "tatu",
+    "frames": 9,
+    "frameSize": "56x32",
+    "animations": [
+      "idle",
+      "walk",
+      "dig"
+    ]
+  },
+  {
+    "name": "arara",
+    "frames": 6,
+    "frameSize": "48x40",
+    "animations": [
+      "fly",
+      "perch"
+    ]
+  },
+  {
+    "name": "insetos",
+    "frames": 10,
+    "frameSize": "16x16",
+    "animations": [
+      "amarela",
+      "azul",
+      "laranja",
+      "fuligem",
+      "libelula"
+    ]
+  },
+  {
+    "name": "serra",
+    "frames": 9,
+    "frameSize": "64x56",
+    "animations": [
+      "idle",
+      "walk",
+      "attack",
+      "off"
+    ]
+  },
+  {
+    "name": "drone",
+    "frames": 3,
+    "frameSize": "48x32",
+    "animations": [
+      "fly",
+      "off"
+    ]
+  },
+  {
+    "name": "van",
+    "frames": 6,
+    "frameSize": "112x72",
+    "animations": [
+      "idle",
+      "dump",
+      "jammed"
+    ]
+  },
+  {
+    "name": "fogo",
+    "frames": 6,
+    "frameSize": "32x40",
+    "animations": [
+      "burn"
+    ]
+  },
+  {
+    "name": "itens",
+    "frames": 14,
+    "frameSize": "24x24",
+    "animations": [
+      "seed",
+      "rare",
+      "fruit",
+      "heartUp"
+    ]
+  },
+  {
+    "name": "brilho",
+    "frames": 9,
+    "frameSize": "32x32",
+    "animations": [
+      "sparkle",
+      "dust"
+    ]
   }
 ]

@@ -136,6 +136,9 @@
     jamGear() {}
     hitbox() { return { x: this.x, y: this.y, w: this.vanX + 30 - this.x, h: this.h }; }
     drawGear(ctx, cam) {
+      const anim = this.gearJammed ? 'jammed' : (this.dumpT > 1.9 ? 'dump' : 'idle');
+      GC.Sheets.draw(ctx, 'van', anim, anim === 'dump' ? 2.4 - this.dumpT : this.t, this.vanX - 4 - cam.x, this.bottom - cam.y, false);
+      return;
       const x = Math.round(this.vanX - cam.x), y = this.sy(cam);
       // caminhonete sem placa
       ctx.fillStyle = '#5a5e66'; ctx.fillRect(x - 24, y - 22, 40, 16); ctx.fillRect(x + 10, y - 30, 16, 24);

@@ -456,6 +456,8 @@ GC.Art = (function () {
 
     // ——— Flora observável ———
     plant(ctx, kind, cx, by, t) {
+      if (kind === 'capim') { for (let k = 0; k < 5; k++) GC.Sheets.draw(ctx, 'scenery', 'capim', 0, cx - 14 + k * 7, by + (k % 2), k % 2 === 1, { frame: k % 2 }); return; }
+      if (GC.FLORA && GC.FLORA.trees.includes(kind)) { GC.Sheets.draw(ctx, 'trees', kind, t + cx * 0.01, cx, by, false); return; }
       const sway = Math.sin(t * 1.5 + cx * 0.01) * 1;
       if (kind === 'pequi' || kind === 'ipe' || kind === 'lobeira') {
         const trunk = kind === 'lobeira' ? 10 : 30;
@@ -497,6 +499,10 @@ GC.Art = (function () {
       const cx = w / 2, by = h - 6;
       ctx.save();
       const s = 2; ctx.translate(cx, by); ctx.scale(s, s); ctx.translate(-cx, -by);
+      const SH = { ema: ['ema', 'idle'], lobo: ['lobo', 'idle'], tucano: ['tucano', 'perch'], cateto: ['cateto', 'idle'], veado: ['veado', 'alert'], tatu: ['tatu', 'idle'], seriema: ['seriema', 'idle'], tamandua: ['tamandua', 'idle'], arara: ['arara', 'fly'] }[key];
+      if (SH) { ctx.restore(); ctx.save(); ctx.imageSmoothingEnabled = false; ctx.setTransform(1, 0, 0, 1, 0, 0); GC.Sheets.draw(ctx, SH[0], SH[1], t, cx, by + 4, false); ctx.restore(); ctx.save(); return; }
+      if (key === 'cagaita') { ctx.restore(); ctx.save(); ctx.setTransform(0.5, 0, 0, 0.5, cx * 0.5, by * 0.5); GC.Sheets.draw(ctx, 'trees', 'cagaita', 0, cx, by + 6, false); ctx.restore(); ctx.save(); return; }
+      if (key === 'capim') { ctx.restore(); ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); for (let k = 0; k < 3; k++) GC.Sheets.draw(ctx, 'scenery', 'capim', 0, cx - 12 + k * 12, by + 2, false, { frame: k % 2 }); ctx.restore(); ctx.save(); return; }
       switch (key) {
         case 'arara': A.arara(ctx, cx, by - 6, 1, t, true); break;
         case 'capivara': A.capivara(ctx, cx, by, 1, t, false); break;

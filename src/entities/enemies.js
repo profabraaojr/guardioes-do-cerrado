@@ -46,7 +46,12 @@
       }
     }
     hitbox() { return { x: this.x + 2, y: this.y + 4, w: this.w - 4, h: this.h - 4 }; }
-    draw(ctx, cam) { Art.fire(ctx, this.sx(cam), this.sy(cam), this.t, this.size * (0.6 + this.hp * 0.4), this.seed); }
+    draw(ctx, cam) {
+      const s = this.size * (0.6 + this.hp * 0.4), x = this.cx - cam.x, y = this.bottom - cam.y;
+      ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+      GC.Sheets.draw(ctx, 'fogo', 'burn', this.t + this.seed, 0, 0, false);
+      ctx.restore();
+    }
   };
 
   class Machine extends Thing {
@@ -102,8 +107,8 @@
       touchDamage(this, g, 'Cuidado com a serra-robô!');
     }
     draw(ctx, cam) {
-      Art.chainsaw(ctx, this.sx(cam), this.sy(cam), this.dir, this.t, this);
-      if (!this.dead) Art.logo(ctx, this.sx(cam) - 3 - this.dir * 2, this.sy(cam) - 17);
+      const anim = this.dead ? 'off' : this.alert ? 'attack' : 'walk';
+      GC.Sheets.draw(ctx, 'serra', anim, this.t, this.cx - cam.x, this.bottom - cam.y, this.dir < 0, { white: this.flash > 0 });
       this.drawHp(ctx, cam);
     }
   };
@@ -131,9 +136,8 @@
     neutralize(g) { super.neutralize(g); this.vy = 0; }
     draw(ctx, cam) {
       if (this.gone) return;
-      if (this.dead) { ctx.fillStyle = '#6a6a72'; ctx.fillRect(this.sx(cam) - 6, this.sy(cam) - 6, 12, 6); ctx.fillStyle = '#5eb04a'; ctx.fillRect(this.sx(cam) - 7, this.sy(cam) - 7, 14, 2); return; }
-      Art.drone(ctx, this.sx(cam), this.sy(cam), this.dir, this.t, this);
-      Art.logo(ctx, this.sx(cam) - 3, this.sy(cam) - 7);
+      GC.Sheets.draw(ctx, 'drone', this.dead ? 'off' : 'fly', this.t, this.cx - cam.x, this.bottom - cam.y + 2, this.dir < 0, { white: this.flash > 0 });
+      if (this.dead) return;
       this.drawHp(ctx, cam);
     }
   };

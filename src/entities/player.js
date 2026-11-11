@@ -118,7 +118,7 @@ GC.Player = class Player {
         if (!jumpHeld && this.vy < 0 && !this.jumpCut) { this.vy *= C.JUMP_CUT; this.jumpCut = true; }
         this.dropThroughSync();
         GC.Phys.move(this, dt, L);
-        if (!wasGround && this.onGround && prevVy > 220) { A.play('land'); g.fx.dust(this.cx, this.bottom, 5); }
+        if (!wasGround && this.onGround && prevVy > 220) { A.play('land'); g.fx.dust(this.cx, this.bottom, 5); g.effect('brilho', 'dust', this.cx, this.bottom - 8); }
         // agarrar paredão
         if (!this.onGround && this.vy > -80 && dir && this.clingCd <= 0 && this.climbableAt(L, dir).any) {
           this.state = 'climb'; this.climbSide = dir; this.facing = dir; this.vx = 0; this.vy = 0;

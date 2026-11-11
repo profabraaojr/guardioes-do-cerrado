@@ -64,11 +64,7 @@
     update(dt) { this.t += dt; this.life -= dt; this.y -= 18 * dt; this.x += Math.sin(this.t * 3) * 20 * dt; if (this.life <= 0) this.dead = true; }
     draw(ctx, cam) {
       ctx.globalAlpha = Math.min(1, this.life);
-      for (let i = 0; i < 3; i++) {
-        const x = Math.round(this.x - cam.x + i * 8), y = Math.round(this.y - cam.y + Math.sin(this.t * 4 + i) * 4), open = Math.sin(this.t * 18 + i) > 0;
-        ctx.fillStyle = '#f2c230'; ctx.fillRect(x - (open ? 3 : 1), y, open ? 3 : 1, 3); ctx.fillRect(x + 1, y, open ? 3 : 1, 3);
-        ctx.fillStyle = '#3a2a1a'; ctx.fillRect(x, y, 1, 3);
-      }
+      for (let i = 0; i < 3; i++) GC.Sheets.draw(ctx, 'insetos', ['amarela', 'laranja', 'azul'][i], this.t + i * 0.4, this.x - cam.x + i * 8, this.y - cam.y + Math.sin(this.t * 4 + i) * 4, false);
       ctx.globalAlpha = 1;
     }
   };
@@ -97,10 +93,8 @@
     draw(ctx, cam) {
       if (this.dead) return;
       for (let i = 0; i < 3; i++) {
-        const x = Math.round(this.x - cam.x + i * 8), y = Math.round(this.y - cam.y + Math.sin(this.t * 5 + i * 2) * 3), open = Math.sin(this.t * 16 + i) > 0;
-        ctx.fillStyle = this.flash > 0 ? '#fff' : '#3a3434';
-        ctx.fillRect(x - (open ? 4 : 2), y, open ? 4 : 2, 4); ctx.fillRect(x + 1, y, open ? 4 : 2, 4);
-        ctx.fillStyle = '#e8501e'; ctx.fillRect(x, y + 1, 1, 1);
+        const x = this.x - cam.x + i * 8, y = this.y - cam.y + Math.sin(this.t * 5 + i * 2) * 3;
+        GC.Sheets.draw(ctx, 'insetos', 'fuligem', this.t + i * 0.3, x, y, i % 2 === 1, { white: this.flash > 0 });
         if (Math.random() < 0.05) g_ash(ctx, x, y);
       }
     }

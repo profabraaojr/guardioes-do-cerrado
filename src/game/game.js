@@ -61,6 +61,7 @@
       this.boss = null; this.bossActive = false;
       this.darkA = 0; this.inputLocked = false; this.lockT = 0;
       this.queue = [];
+      this.effects = [];
       for (const s of this.level.spawns) {
         const K = GC.Ent[s.type];
         if (!K) { console.warn('Entidade desconhecida:', s.type); continue; }
@@ -75,8 +76,40 @@
       // talks já vistos não se repetem
       this.entities.forEach((e) => { if (e instanceof GC.Ent.talk && save.flags['dlg_' + e.o.id]) e.dead = true; });
       if (save.allies.arara) this.spawnArara(sx, sy - 30);
+      this.buildScenery();
       this.snapCamera();
       [this.darkCanvas, this.darkCtx] = U.makeCanvas(C.W, C.H);
+    }
+
+    // vegetação rasteira, flores e pedras espalhadas sobre a grama (apenas visual)
+    buildScenery() {
+      const L = this.level, T = GC.T, H = GC.U.hash;
+      this.scenery = []; this.front = [];
+      for (let tx = 0; tx < L.w; tx++) {
+        const theme = L.theme[tx];
+        if (theme === 'boss') continue;
+        for (let ty = 1; ty < L.h; ty++) {
+          if (L.tile(tx, ty) !== T.GRASS || GC.TP[L.tile(tx, ty - 1)].solid || L.tile(tx, ty - 1) !== T.EMPTY) continue;
+          if (L.inDark(tx * 16 + 8, ty * 16 - 4)) continue;
+          for (let k = 0; k < 2; k++) {
+            const h = H(tx, ty, 7 + k), x = tx * 16 + 4 + k * 8 + H(tx, ty, 9 + k) * 4;
+            let kind = null;
+            if (h < 0.34) kind = 'tuft';
+            else if (h < 0.42 && (theme === 'cerrado' || theme === 'pedra')) kind = 'capim';
+            else if (h < 0.47) kind = 'flower';
+            else if (h < 0.51) kind = 'shrub';
+            else if (h < 0.54) kind = 'rock';
+            if (kind) this.scenery.push({ kind, x, y: ty * 16, v: Math.floor(H(tx, ty, 3 + k) * GC.FLORA.variants[kind]) });
+          }
+          if (H(tx, ty, 21) < 0.07) this.front.push({ kind: 'front', x: tx * 16 + 8, y: ty * 16 + 3, v: H(tx, ty, 22) < 0.5 ? 0 : 1 });
+        }
+      }
+    }
+    drawScenery(ctx, cam, list) {
+      for (const s of list) {
+        if (s.x < cam.x - 20 || s.x > cam.x + GC.CFG.W + 20 || s.y < cam.y - 10 || s.y > cam.y + GC.CFG.H + 40) continue;
+        GC.Sheets.draw(ctx, 'scenery', s.kind, 0, s.x - cam.x, s.y - cam.y, s.v === 1 && s.kind === 'tuft', { frame: s.v });
+      }
     }
 
     get tool() { return GC.CHARACTERS[this.player.char].tool; }
@@ -119,8 +152,12 @@
 
     persist() { GC.Save.write(this.save); }
 
+    // efeito animado de uma vez (brilho de coleta, poeira de pouso)
+    effect(sheet, anim, x, y) { this.effects.push({ sheet, anim, x, y, t: 0, d: GC.Sheets.duration(sheet, anim) }); }
+
     collect(p) {
       const A = GC.Audio, S = this.save;
+      this.effect('brilho', 'sparkle', p.cx, p.y + p.h / 2);
       if (p.kind === 'seed') { S.stats.seeds++; A.play('pickup'); }
       else if (p.kind === 'fruit') { this.hearts = Math.min(S.maxHearts, this.hearts + 1); A.play('heart'); this.toast('Fruto do Cerrado: +1 vitalidade'); }
       else if (p.kind === 'rare') {
@@ -321,6 +358,8 @@
       for (const pr of this.projectiles) pr.update(dt, this);
       this.projectiles = this.projectiles.filter((pr) => !pr.dead);
       this.fx.update(dt);
+      for (const e of this.effects) e.t += dt;
+      this.effects = this.effects.filter((e) => e.t < e.d);
       if (this.autoClean) this.stepAutoClean(dt);
 
       // zonas
@@ -387,6 +426,7 @@
       L.renderBack(ctx, cam, this.time);
       const insideFake = L.at(this.player.cx, this.player.cy) === GC.T.FAKE;
       L.renderTiles(ctx, cam, this.time, this.reveal > 0 || insideFake ? 1 : 0);
+      this.drawScenery(ctx, cam, this.scenery);
       // entidades atrás (plantas, placas)
       for (const e of this.entities) if (e instanceof GC.Ent.plant || e instanceof GC.Ent.bloom) e.draw(ctx, cam, this);
       for (const e of this.entities) if (!(e instanceof GC.Ent.plant) && !(e instanceof GC.Ent.bloom) && e !== this.arara) e.draw(ctx, cam, this);
@@ -395,6 +435,8 @@
       if (this.arara) this.arara.draw(ctx, cam, this);
       for (const pr of this.projectiles) pr.draw(ctx, cam);
       L.renderWater(ctx, cam, this.time);
+      this.drawScenery(ctx, cam, this.front);
+      for (const e of this.effects) GC.Sheets.draw(ctx, e.sheet, e.anim, e.t, e.x - cam.x, e.y - cam.y, false);
       this.fx.draw(ctx, cam);
       this.drawMarkers(ctx, cam);
       if (this.darkA > 0.01) this.drawDark(ctx, cam);

@@ -14,22 +14,25 @@
     <!-- HUD -->
     <div id="hud" hidden>
       <div class="hud-top">
-        <div class="hud-left">
+        <div class="hud-panel hud-status">
           <div id="hearts" aria-label="Vitalidade"></div>
-          <div id="waterWrap" class="waterbar"><span>Água</span><b><i id="water"></i></b></div>
+          <div id="waterWrap" class="waterbar" data-state="cheia"><i class="ico" data-ico="drop"></i><b><i id="water"></i></b><span id="waterState">Cheia</span></div>
         </div>
-        <div class="hud-char">
-          <canvas id="charPortrait" width="28" height="28"></canvas>
+        <div class="hud-panel hud-char">
+          <canvas id="charPortrait" width="40" height="40"></canvas>
           <div class="hud-char-txt"><b id="charName">Piatã</b><small id="charTool"></small></div>
-          <div class="hud-swap" title="Trocar personagem (L)"><span>L</span><canvas id="partnerPortrait" width="28" height="28"></canvas></div>
-          <div class="hud-ally"><span>Q</span><em id="allyState"></em></div>
+          <div class="hud-keys">
+            <div class="hud-swap" title="Trocar personagem (L)"><kbd>L</kbd><canvas id="partnerPortrait" width="40" height="40"></canvas></div>
+            <div class="hud-ally"><kbd>Q</kbd><em id="allyState"></em></div>
+          </div>
         </div>
-        <div class="hud-right">
-          <span class="cnt rare" title="Sementes raras"><i></i><b id="rares">0/5</b></span>
-          <span class="cnt guide" title="Guia de Campo"><i></i><b id="guideCount">0</b></span>
+        <div class="hud-panel hud-right">
+          <span class="cnt" title="Sementes raras"><i class="ico" data-ico="rare"></i><b id="rares">0/5</b></span>
+          <span class="cnt" title="Guia de Campo"><i class="ico" data-ico="book"></i><b id="guideCount">0</b></span>
           <button id="pauseBtn" type="button" aria-label="Pausar">II</button>
         </div>
       </div>
+      <div id="quest" class="hud-panel"><b id="questTitle"></b><small id="questSub"></small></div>
       <div id="bossbar" hidden><b id="bossName"></b><span id="bossLabel"></span><i><em id="bossFill"></em></i></div>
       <div id="banner"></div>
       <div id="toasts" aria-live="polite"></div>
@@ -174,12 +177,16 @@
 <script src="src/gfx/pixel.js"></script>
 <script src="src/gfx/puppet.js"></script>
 <script src="src/gfx/sheets.js"></script>
+<script src="src/gfx/flora.js"></script>
+<script src="src/gfx/fauna_art.js"></script>
+<script src="src/gfx/objects_art.js"></script>
 <script src="src/gfx/font.js"></script>
 <script src="src/gfx/portraits.js"></script>
 <script src="src/entities/physics.js"></script>
 <script src="src/entities/projectiles.js"></script>
 <script src="src/entities/items.js"></script>
 <script src="src/entities/fauna.js"></script>
+<script src="src/entities/fauna2.js"></script>
 <script src="src/entities/enemies.js"></script>
 <script src="src/entities/boss.js"></script>
 <script src="src/entities/antagonists/base.js"></script>
