@@ -1,0 +1,40 @@
+{
+  "name": "Guardiões do Cerrado",
+  "short_name": "Guardiões",
+  "lang": "pt-BR",
+  "description": "Aventura em plataforma 2D pelo Cerrado de Rondonópolis (MT), com Piatã e Larinha.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": [
+    "fullscreen",
+    "standalone"
+  ],
+  "orientation": "landscape",
+  "background_color": "#15110c",
+  "theme_color": "#15110c",
+  "categories": [
+    "games",
+    "education"
+  ],
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
