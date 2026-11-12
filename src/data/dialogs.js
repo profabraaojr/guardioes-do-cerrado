@@ -38,7 +38,8 @@ GC.DIALOGS = {
     { who: 'larinha', text: 'E {a|mercúrio}. Meu sensor está apitando sem parar.', mood: 'worried' },
     { who: 'garimpeiro', text: 'Ninguém mandou vocês entrarem aqui. Isso é meu ganha-pão!', mood: 'determined' },
     { who: 'piata', text: 'Ganha-pão que envenena o rio de todo mundo. Vamos desligar essa máquina.', mood: 'determined' },
-    { who: 'larinha', text: 'Piatã, trava as {g|mangueiras} com sementes. Depois eu cuido do vapor e do painel.', mood: 'determined' }
+    { who: 'larinha', text: 'Piatã, trava as {g|mangueiras} com sementes. Depois espalha o vapor com o tremor do {g|Soco da Terra} e quebra o painel.', mood: 'determined', only: 'piata' },
+    { who: 'piata', text: 'Larinha, o {a|Feixe do Satélite} trava as {g|mangueiras}. Depois o jato derruba o vapor e você desliga o painel.', mood: 'determined', only: 'larinha' }
   ],
   garimpo_fim: [
     { who: 'larinha', text: 'Desligada. Sem mercúrio novo, a água da caverna se recupera com o tempo.', mood: 'happy' },
@@ -65,6 +66,8 @@ GC.DIALOGS = {
     { who: 'larinha', text: 'Satélite e drone? A senhora tem que me mostrar esse sistema depois!' }
   ],
   start: [
+    { who: 'larinha', text: 'Teste, teste... Piatã, está me ouvindo? Fico com os sensores e falo com você pelo {a|rádio da EcoPack}.', only: 'piata' },
+    { who: 'piata', text: 'Larinha, está me ouvindo? Fico no rádio. Se precisar ler a mata, eu te guio daqui.', only: 'larinha' },
     { who: 'larinha', text: 'Meu sensor marcou {a|água turva} e pouco oxigênio no {y|Rio Vermelho}. Isso não acontece de uma hora para outra.', mood: 'worried' },
     { who: 'piata', text: 'As {g|capivaras} sumiram da margem desde ontem. Os bichos perceberam antes do seu aparelho.', mood: 'determined' },
     { who: 'larinha', text: 'Então fechado: você lê a trilha, eu leio os dados.' },
@@ -72,7 +75,8 @@ GC.DIALOGS = {
   ],
   arara: [
     { who: 'piata', text: 'Calma, amiga. Ninguém mais vai te prender.' },
-    { who: 'larinha', text: 'Gaiola com etiqueta de transporte... isso é tráfico de animais. Vou fotografar como prova.' },
+    { who: 'larinha', text: 'Gaiola com etiqueta de transporte... isso é tráfico de animais. Vou fotografar como prova.', only: 'larinha' },
+    { who: 'larinha', text: 'Etiqueta de transporte na gaiola? Isso é tráfico de animais. Descreve tudo para mim: vira prova.', only: 'piata' },
     { who: 'piata', text: 'Ela vem com a gente. Do alto, arara enxerga a mata melhor que qualquer drone.' },
     { who: 'larinha', text: 'Ei! ...Tá bom, talvez. Por enquanto.' }
   ],
@@ -81,20 +85,24 @@ GC.DIALOGS = {
     { who: 'piata', text: '{g|Sementes nativas} travam essas engrenagens. E onde caírem no chão pelado, nasce planta.', mood: 'determined' }
   ],
   ledge: [
-    { who: 'larinha', text: 'Esse barranco é alto demais para mim.' },
-    { who: 'piata', text: 'Eu pulo. Mas se eu plantar uma muda no solo degradado, ela vira degrau para você.' }
+    { who: 'piata', text: 'Barranco alto. Eu pulo direto, mas uma semente no {y|solo degradado} vira muda e vira degrau.', only: 'piata' },
+    { who: 'larinha', text: 'Esse barranco é alto demais para mim.', only: 'larinha' },
+    { who: 'piata', text: 'Molha o {y|solo degradado} com o purificador. A terra guarda sementes adormecidas: com água, brota uma muda que vira degrau.', only: 'larinha' }
   ],
   fire: [
     { who: 'piata', text: 'Fumaça. Fogo nessa época, com o capim seco, se espalha rápido.' },
-    { who: 'larinha', text: 'Meu purificador apaga isso. Só preciso recarregar em {a|água limpa} depois.', mood: 'determined' }
+    { who: 'larinha', text: 'Meu purificador apaga isso. Só preciso recarregar em {a|água limpa} depois.', mood: 'determined', only: 'larinha' },
+    { who: 'larinha', text: 'Sem água aí? Terra abafa fogo pequeno. Use o {g|Soco da Terra} bem em cima de cada foco.', mood: 'determined', only: 'piata' }
   ],
   tamandua: [
-    { who: 'piata', text: 'Um tamanduá-bandeira. Fica parada, Larinha: ele enxerga pouco, mas tem um faro incrível.' },
+    { who: 'piata', text: 'Um tamanduá-bandeira. Fica parada, Larinha: ele enxerga pouco, mas tem um faro incrível.', only: 'larinha' },
+    { who: 'piata', text: 'Um tamanduá-bandeira. Ele enxerga pouco, mas tem um faro incrível. Fico parado para não assustar.', only: 'piata' },
     { who: 'piata', text: 'Ele confia na gente agora. Perto do cupinzeiro tem uma toca antiga que ele sabe abrir.' }
   ],
   fence: [
     { who: 'piata', text: 'Uma cerca elétrica no meio do parque? Isso bloqueia o caminho dos animais.' },
-    { who: 'larinha', text: 'Corredor ecológico cortado. Deixa o terminal comigo: troque para mim e acesse.' }
+    { who: 'larinha', text: 'Corredor ecológico cortado. O terminal ao lado controla a energia: deixa comigo.', only: 'larinha' },
+    { who: 'larinha', text: 'Corredor ecológico cortado. Sem a senha do terminal, só derrubando o gerador: o {g|Soco da Terra} resolve.', only: 'piata' }
   ],
   cliff: [
     { who: 'larinha', text: 'Você tem certeza de que esse caminho é seguro?' },
@@ -104,7 +112,8 @@ GC.DIALOGS = {
   ],
   stream: [
     { who: 'larinha', text: 'O riacho lá em cima está contaminado. A leitura bate com a do Rio Vermelho: é daqui que vem.' },
-    { who: 'piata', text: 'Eu travo a máquina. Você limpa a água. Sem pisar no lodo.' }
+    { who: 'larinha', text: 'Trava a máquina com sementes. Sem novos resíduos, o riacho se limpa sozinho. Não pisa no lodo!', only: 'piata' },
+    { who: 'piata', text: 'Desliga a máquina com o jato e limpa a água. Sem pisar no lodo.', only: 'larinha' }
   ],
   capivara: [
     { who: 'larinha', text: 'Capivaras ficam vários minutos debaixo d\'água! Olha como ela respira fundo antes de mergulhar.' },
@@ -131,14 +140,17 @@ GC.DIALOGS = {
   ],
   gate: [
     { who: 'larinha', text: 'Comporta com duas travas: uma mecânica no alto da pedra e outra eletrônica aqui embaixo.' },
-    { who: 'piata', text: 'Eu subo e puxo a alavanca. Você cuida dos fios.' },
-    { who: 'larinha', text: 'Olha só, um plano em equipe. Quem diria.' }
+    { who: 'piata', text: 'Eu subo e puxo a alavanca. Depois, sem senha, a trava eletrônica vai no {g|Soco da Terra}.', only: 'piata' },
+    { who: 'piata', text: 'A alavanca está alta demais para você. Manda o {a|drone} (Aliado): ele puxa com a garra. Depois é só o terminal.', only: 'larinha' },
+    { who: 'larinha', text: 'Olha só, um plano em equipe pelo rádio. Quem diria.' }
   ],
   boss: [
     { who: 'larinha', text: 'Aquilo é... o {y|Colosso}, um robô de desmatamento do Projeto Horizonte!', mood: 'surprised' },
     { who: 'piata', text: 'Está derrubando tudo. A gente precisa parar essa máquina agora.', mood: 'determined' },
-    { who: 'larinha', text: 'Os três núcleos de energia no topo! Meu drone desliga os escudos por alguns segundos.', mood: 'determined' },
-    { who: 'piata', text: 'E aí minhas sementes travam tudo. Se o fogo subir, é com você.' }
+    { who: 'larinha', text: 'Os três núcleos de energia no topo! Meu drone desliga os escudos por alguns segundos.', mood: 'determined', only: 'larinha' },
+    { who: 'piata', text: 'Com os escudos fora, o jato ou o Feixe travam os núcleos. Se o fogo subir, apaga primeiro.', only: 'larinha' },
+    { who: 'larinha', text: 'Os três núcleos de energia no topo têm escudo. Faz ele investir contra a pedra: na batida, os escudos caem.', mood: 'determined', only: 'piata' },
+    { who: 'piata', text: 'E aí minhas sementes travam os núcleos. O fogo eu abafo com o Soco da Terra.', only: 'piata' }
   ],
   onca_boss: [
     { who: 'piata', text: 'Ela voltou!' },

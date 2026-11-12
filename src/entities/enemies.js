@@ -31,7 +31,7 @@
       if (Math.random() < 0.15) g.fx.ember(this.cx + (Math.random() - 0.5) * 8, this.y + 2);
       if (Math.random() < 0.05) g.fx.smoke(this.cx, this.y, 1, true);
       this.hp = Math.min(1, this.hp + dt * 0.05);
-      touchDamage(this, g, 'Fogo! Use o purificador da Larinha para apagar.');
+      touchDamage(this, g, g.player.char === 'piata' ? 'Fogo! Abafe com o Soco da Terra (Poder).' : 'Fogo! Apague com o purificador (Usar).');
       if (this.boss) {
         this.spread -= dt;
         if (this.spread <= 0) {
@@ -161,7 +161,8 @@
     neutralize(g) {
       super.neutralize(g);
       g.autoClean = true;
-      g.say('larinha', 'Desligou! Sem novos resíduos, o riacho começa a se limpar. Meu jato acelera o processo.');
+      if (g.player.char === 'larinha') g.say('larinha', 'Desligou! Sem novos resíduos, o riacho começa a se limpar. Meu jato acelera o processo.');
+      else g.say('larinha', 'Desligou! Sem novos resíduos, o riacho se limpa sozinho. Espera um pouco antes de nadar.');
     }
     draw(ctx, cam) {
       Art.polluter(ctx, this.sx(cam), this.sy(cam), this.dir, this.t, this);
@@ -176,7 +177,7 @@
       if (this.dead) return false;
       if (kind === 'seed') {
         g.fx.burst(proj.x, proj.y, '#5a4a5e', 3);
-        if (!this.told) { this.told = true; g.say('piata', 'As sementes afundam nesse lodo. Precisamos do purificador da Larinha!'); }
+        if (!this.told) { this.told = true; g.say('piata', 'As sementes afundam nesse lodo. Melhor pular por cima: desligando a draga, ele se desfaz.'); }
         return true;
       }
       this.hp -= 0.12; this.flash = 0.06;

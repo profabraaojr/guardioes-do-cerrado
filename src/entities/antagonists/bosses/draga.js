@@ -1,8 +1,8 @@
 // Chefe da Cidade de Pedra: DRAGA CLANDESTINA do garimpo ilegal, operada por um garimpeiro.
-// Mecânica própria, em três etapas cooperativas:
-//   1. Mangueiras: Piatã trava com sementes as duas mangueiras de sucção.
-//   2. Vapor de mercúrio: a draga superaquece; Larinha dispersa a nuvem tóxica com o purificador.
-//   3. Painel: com o vapor dissipado, Larinha desliga a draga no painel de controle.
+// Mecânica própria, em três etapas; cada guardião vence do seu jeito:
+//   1. Mangueiras: sementes (Piatã) ou Feixe do Satélite (Larinha) travam a sucção.
+//   2. Vapor de mercúrio: jato d'água (Larinha) ou tremor do Soco da Terra perto da nuvem (Piatã).
+//   3. Painel: Larinha desliga no controle; Piatã derruba com o Soco da Terra.
 // O garimpeiro se rende; o lodo da caverna é purificado; a passagem se abre.
 (function () {
   const U = GC.U;
@@ -40,7 +40,7 @@
   GC.Antagonists.define('draga', {
     group: 'maquina', name: 'Draga clandestina', boss: true, guide: 'garimpoIlegal',
     desc: 'Draga de garimpo ilegal escondida na caverna, que lança lama com mercúrio e libera vapor tóxico.',
-    resolve: 'Travar as mangueiras (Piatã), dispersar o vapor e desligar o painel (Larinha).'
+    resolve: 'Travar as mangueiras (sementes ou Feixe), dispersar o vapor (jato ou tremor do Soco) e desligar o painel (terminal ou Soco da Terra).'
   }, class Draga extends GC.BossBase {
     constructor(g, x, y, o) {
       super(g, x, y, o, 72, 46);
@@ -49,8 +49,8 @@
       this.hoses = [];
       this.phases = [
         { id: 'hoses', label: 'Trave as mangueiras', enter() {} },
-        { id: 'vapor', label: 'Disperse o vapor de mercúrio', enter(g) { this.vapor = 1; GC.Audio.play('engine'); g.say('larinha', 'Vapor de mercúrio! Troque para mim: o jato d’água condensa a nuvem.'); } },
-        { id: 'panel', label: 'Desligue o painel da draga', enter(g) { this.panelOpen = true; this.interactable = true; g.say('larinha', 'O painel ficou acessível. Deixa comigo!'); } }
+        { id: 'vapor', label: 'Disperse o vapor de mercúrio', enter(g) { this.vapor = 1; GC.Audio.play('engine'); g.say('larinha', g.player.char === 'larinha' ? 'Vapor de mercúrio! O jato d’água condensa a nuvem.' : 'Vapor de mercúrio! Não entra na nuvem: dá um Soco da Terra perto dela, o tremor espalha o vapor.'); } },
+        { id: 'panel', label: 'Desligue o painel da draga', enter(g) { this.panelOpen = true; this.interactable = true; g.say('larinha', g.player.char === 'larinha' ? 'O painel ficou acessível. Deixa comigo!' : 'O painel ficou exposto. Sem senha, Soco da Terra nele!'); } }
       ];
       this.prompt = 'Desligar a draga';
       this.gate = o.gate;
@@ -64,7 +64,7 @@
     }
     interact(g) {
       if (!this.panelOpen || this.finished) return;
-      if (g.player.char !== 'larinha') { g.say('piata', 'Esse painel é coisa da Larinha.'); return; }
+      if (g.player.char !== 'larinha') { g.say('piata', 'Sem senha. Do meu jeito: Soco da Terra no painel (Poder).'); return; }
       this.interactable = false; this.shutdown(g);
     }
     shutdown(g) {
@@ -110,7 +110,7 @@
       } else if (P === 'vapor') {
         // nuvem tóxica à frente da draga
         const cloud = this.cloudBox();
-        if (p.state !== 'dead' && U.overlap(cloud, p) && this.vapor > 0.15) p.hurt(1, null, g, 'Vapor de mercúrio! Disperse com o jato d’água.');
+        if (p.state !== 'dead' && U.overlap(cloud, p) && this.vapor > 0.15) p.hurt(1, null, g, g.player.char === 'piata' ? 'Vapor de mercúrio! Fique fora da nuvem e use o Soco da Terra perto dela.' : 'Vapor de mercúrio! Disperse com o jato d’água.');
         for (const d of g.projectiles) if (d instanceof GC.Droplet && U.overlap({ x: d.x - 2, y: d.y - 2, w: 4, h: 4 }, cloud)) { d.dead = true; this.vapor -= 0.011; if (Math.random() < 0.2) g.fx.steam(d.x, d.y, 1); }
         this.vapor = Math.min(1, this.vapor + dt * 0.01);
         if (Math.random() < this.vapor * 0.5) g.fx.smoke(cloud.x + Math.random() * cloud.w, cloud.y + Math.random() * cloud.h, 1, false);

@@ -35,6 +35,16 @@ GC.Powers = (function () {
     if (e.dead) return false;
     // animais, pessoas parceiras e decoração nunca são alvos
     if (e instanceof E.caixa) { e.smash(g); return true; }
+    // Piatã: terra sobre o fogo tira o ar da chama (abafamento)
+    if (e instanceof GC.Fire) {
+      if (kind !== 'soco') return false;
+      e.hp = 0.001; e.hit('water', 1, g); g.fx.dust(e.cx, e.bottom, 10);
+      once(g, 'socoFogo', 'piata', 'Terra em cima da chama: sem ar, o fogo apaga.');
+      return true;
+    }
+    // Piatã: sem senha, o Soco da Terra derruba o gerador do equipamento ilegal
+    if (e instanceof E.terminal && !e.done) return kind === 'soco' ? e.force(g) : false;
+    if (e instanceof E.draga && kind === 'soco' && e.phaseIdx === 2 && !e.finished) { e.interactable = false; e.shutdown(g); return true; }
     if (e instanceof GC.Machine) {
       const dmg = (kind === 'feixe' ? 3 : 2) * (e.scanned > 0 ? 2 : 1);
       e.hp -= dmg; e.flash = 0.15;
@@ -56,7 +66,7 @@ GC.Powers = (function () {
     }
     if (e instanceof E.lodo) {
       if (kind === 'feixe') { e.hp = 0.01; e.hit('water', 1, g, at); return true; }
-      once(g, 'socoLodo', 'piata', 'O soco afunda no lodo. A luz da Larinha ou a água resolvem melhor.');
+      once(g, 'socoLodo', 'piata', 'O soco afunda no lodo. Melhor pular por cima: desligando a draga, ele se desfaz.');
       return false;
     }
     if (e instanceof GC.Criatura) {
@@ -71,7 +81,7 @@ GC.Powers = (function () {
         if (!e.shieldsDown) { g.fx.sparks(at.x, e.y - 6, 12); once(g, 'feixeEscudo', 'larinha', 'Os escudos refletem a luz! Primeiro o drone, depois o feixe.'); return true; }
         let best = null, bd = 1e9;
         for (const v of e.valves) if (v.alive) { const d = Math.abs(e.x + v.dx - at.x); if (d < bd) { bd = d; best = v; } }
-        if (best && bd < 40) { best.hp -= 2; best.flash = 0.2; GC.Audio.play('metal'); g.fx.sparks(e.x + best.dx, e.y - 4, 12); if (best.hp <= 0) e.valveDown(best, g); }
+        if (best && bd < 40) { best.hp -= 2.5; best.flash = 0.2; GC.Audio.play('metal'); g.fx.sparks(e.x + best.dx, e.y - 4, 12); if (best.hp <= 0) e.valveDown(best, g); }
         return true;
       }
       e.stun = Math.max(e.stun, 0.7); g.shake(5, 0.3); g.fx.sparks(at.x, at.y, 12);
@@ -94,6 +104,11 @@ GC.Powers = (function () {
     }
     // tremor no chão: desequilibra infratores próximos sem tocá-los
     for (const e of g.entities) if (e instanceof GC.Infrator && e.active && Math.abs(e.cx - p.cx) < 56 && Math.abs(e.bottom - p.bottom) < 20 && !U.overlap(box, e)) { e.stun = 0.8; e.state = 'stunned'; }
+    // o tremor do soco espalha o vapor de mercúrio da draga (sem entrar na nuvem)
+    for (const e of g.entities) if (e instanceof GC.Ent.draga && e.phaseIdx === 1 && !e.finished) {
+      const c = e.cloudBox();
+      if (p.cx > c.x - 80 && p.cx < c.x + c.w) { e.vapor -= 0.34; /* pode ficar negativo: a fase avança ao chegar a zero */ g.fx.steam(c.x + 24, p.bottom - 18, 16); once(g, 'socoVapor', 'larinha', 'Isso! O tremor espalha a nuvem. Mais duas vezes!'); hit = true; }
+    }
     g.effect('brilho', 'impacto', at.x, at.y);
     g.fx.dust(at.x, p.bottom, 10);
     g.shake(hit ? GC.CFG.SHAKE_BLAST + 1 : GC.CFG.SHAKE_PUNCH, 0.2);

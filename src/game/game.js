@@ -182,6 +182,15 @@
       this.fx.leaves(tx * 16 + 8, ty * 16, 6);
     }
 
+    // Larinha: irrigar o solo degradado desperta o banco de sementes da terra (vira muda)
+    waterSoil(tx, ty) {
+      const k = tx + ',' + ty;
+      this.soilWet = this.soilWet || {};
+      this.soilWet[k] = (this.soilWet[k] || 0) + 1;
+      if (this.soilWet[k] % 6 === 0) this.fx.leaves(tx * 16 + 8, ty * 16, 1);
+      if (this.soilWet[k] >= 22) { delete this.soilWet[k]; this.plantAt(tx, ty); if (!this.toldSoil) { this.toldSoil = true; this.toast('A água despertou as sementes adormecidas no solo.'); } }
+    }
+
     cleanAt(tx, ty) {
       const L = this.level;
       if (L.tile(tx, ty) !== GC.T.POLLUTED) return;
@@ -457,7 +466,7 @@
       // entidades atrás (plantas, placas)
       for (const e of this.entities) if (e instanceof GC.Ent.plant || e instanceof GC.Ent.bloom) e.draw(ctx, cam, this);
       for (const e of this.entities) if (!(e instanceof GC.Ent.plant) && !(e instanceof GC.Ent.bloom) && e !== this.arara) e.draw(ctx, cam, this);
-      this.drawPartner(ctx, cam);
+      // um único guardião em campo: o parceiro acompanha pelo rádio (não é desenhado)
       this.player.draw(ctx, cam, this);
       if (this.arara) this.arara.draw(ctx, cam, this);
       for (const pr of this.projectiles) pr.draw(ctx, cam);

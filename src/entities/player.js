@@ -290,9 +290,9 @@ GC.Player = class Player {
   useTools(dt, g, dir, up, down) {
     const I = GC.Input, C = GC.CFG, A = GC.Audio;
     const lock = g.inputLocked;
-    if (!lock && I.pressed('swap')) g.swapTool();
     const canUse = (this.state === 'normal' || (this.state === 'swim' && !this.wet(g.level, this.cx, this.y + 3))) && !lock;
-    this.aim = up ? 'up' : (down && !this.onGround ? 'down' : 'fwd');
+    // agachada, Larinha mira o jato no chão à frente (irrigar o solo degradado)
+    this.aim = up ? 'up' : (down && (!this.onGround || g.tool === 'water') ? 'down' : 'fwd');
     // ——— poder especial (F) ———
     this.powerCd = Math.max(0, (this.powerCd || 0) - dt);
     if (!lock && I.pressed('power') && canUse && !this.punchT && !this.beamT) {

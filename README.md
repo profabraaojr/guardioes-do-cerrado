@@ -32,7 +32,6 @@ Depois acesse `http://localhost:8000`.
 | Deslizar / andar abaixado | ↓ correndo / segurar ↓ | direcional ou analógico | direcional |
 | Descer de plataforma | ↓ + pular | ↓ + A | direcional + Pular |
 | Usar ferramenta | J, X (↑ mira para cima; segurar repete) | X ou RT | Usar |
-| Trocar personagem | L, C | Y | Trocar |
 | Aliado | Q, V | B ou RB | Aliado |
 | Poder especial | F, B | LT ou L3 | Poder |
 | Interagir | ↑ ou E | LB | direcional ↑ |
@@ -40,6 +39,8 @@ Depois acesse `http://localhost:8000`.
 | Confirmar (diálogos) | Enter ou pulo | A | Pular |
 
 As teclas podem ser trocadas na tela **Controles** e ficam gravadas no navegador; o botão "Restaurar teclas padrão" volta ao mapa acima. O analógico tem zona morta de 0,25. O jogo pausa sozinho quando a aba vai para segundo plano ou o controle é desconectado.
+
+**Um guardião por partida.** Na tela de escolha, você decide se joga com Piatã ou com Larinha. Só o escolhido aparece em campo, e o outro acompanha pelo rádio da EcoPack. Cada um vence os desafios do Capítulo 1 do seu jeito (veja `docs/CONTROLES.md`). "Continuar" segue com o mesmo guardião; para jogar com o outro, comece um novo jogo.
 
 O jogo também aceita gamepad. O progresso é salvo no navegador a cada marco de trilha (fita amarela).
 

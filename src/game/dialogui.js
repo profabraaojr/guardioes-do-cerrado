@@ -79,7 +79,14 @@ GC.DialogUI = (function () {
     d.total = P ? P.lines.reduce((n, l) => n + l.reduce((m, r) => m + [...r.t].length, 0), 0) : 0;
   }
 
+  // Em partida, só um guardião está em campo: as falas do outro chegam pelo rádio.
+  // Linhas com `only: 'piata'|'larinha'` aparecem apenas para aquele guardião.
+  const radio = (who) => !!GC.activeChar && (who === 'piata' || who === 'larinha') && who !== GC.activeChar;
+  const fits = (L) => !L.only || !GC.activeChar || L.only === GC.activeChar;
+
   function start(lines, onDone) {
+    lines = lines.filter(fits);
+    if (!lines.length) { if (onDone) onDone(); return; }
     dlg = { lines, page: 0, onDone, shown: 0 };
     layout(dlg);
     cv.classList.add('active'); document.body.classList.add('dlg-open');
@@ -144,6 +151,12 @@ GC.DialogUI = (function () {
     g.addColorStop(0, who === 'vertice' ? '#0a2230' : '#2a5a7a'); g.addColorStop(1, who === 'vertice' ? '#06121a' : '#1a3048');
     o.fillStyle = g; o.fillRect(x + 4, y + 4, 40, 40);
     o.drawImage(GC.Portraits.get(who, mood), x + 4, y + 4);
+    if (radio(who)) {
+      // retrato pelo rádio: tom verde e linhas de transmissão
+      o.fillStyle = 'rgba(40,140,80,0.28)'; o.fillRect(x + 4, y + 4, 40, 40);
+      o.fillStyle = 'rgba(6,20,12,0.35)'; for (let ly = y + 4 + (Math.floor(time * 12) % 2); ly < y + 44; ly += 2) o.fillRect(x + 4, ly, 40, 1);
+      o.fillStyle = '#8ef0a8'; o.fillRect(x + 38, y + 6, 1, 6); o.fillRect(x + 36, y + 8, 1, 1); o.fillRect(x + 40, y + 8, 1, 1); o.fillRect(x + 35, y + 6, 1, 1); o.fillRect(x + 41, y + 6, 1, 1);
+    }
   }
   function drawLines(lines, x, y, limit) {
     let n = 0;
@@ -171,6 +184,7 @@ GC.DialogUI = (function () {
       const S = GC.SPEAKERS[L.who];
       const pw = plate(g.tx - 2, boxY - 12, S ? S.name.replace(' (transmissão)', '') : '', PLATES[L.who] || (S && S.infrator ? PLATES.infrator : PLATES.vertice));
       if (L.who === 'vertice') F().draw(ox, '· transmissão', g.tx + pw + 12, boxY - 11, '#7ae0f0', SHADOW);
+      else if (radio(L.who)) F().draw(ox, '· rádio', g.tx + pw + 12, boxY - 11, '#8ef0a8', SHADOW);
     }
     const ty = boxY + Math.floor((boxH - lines.length * LH) / 2) - 1;
     drawLines(lines, g.tx, ty, Math.floor(dlg.shown));
@@ -194,6 +208,7 @@ GC.DialogUI = (function () {
     ox.globalAlpha = a;
     frameBox(x + 20, y, s.w - 20, h);
     if (s.who !== 'narrador' && s.who !== 'vertice') portrait(x, y - 1, s.who, moodFor(s));
+    if (radio(s.who)) F().draw(ox, 'rádio', x + 4, y + h + 1, '#8ef0a8', SHADOW);
     drawLines(s.lines, x + 56, y + Math.floor((h - s.lines.length * LH) / 2) - 1);
     ox.globalAlpha = 1;
   }

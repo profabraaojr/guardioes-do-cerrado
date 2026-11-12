@@ -243,6 +243,8 @@
       if (this.life > 0.8) for (const e of g.entities) {
         if (e.scannable && !e.dead && U.dist(this.px, this.py, e.cx, e.y + e.h / 2) < 230) { if (!e.scanned) { g.fx.ring(e.cx, e.y + e.h / 2, '#6ae8c8'); } e.scanned = Math.max(e.scanned || 0, 1.5); }
       }
+      // garra do drone: puxa alavancas que Larinha não alcança
+      if (this.life > 0.8) for (const e of g.entities) if (e instanceof GC.Ent.lever && !e.on && U.dist(this.px, this.py, e.cx, e.y + 4) < 150) e.pullByDrone(g);
       if (this.life <= 0) this.dead = true;
     }
     draw(ctx, cam) {

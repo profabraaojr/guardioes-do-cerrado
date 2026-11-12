@@ -197,7 +197,7 @@ GC.Ent.moundSpot = class MoundSpot extends Thing {
   constructor(g, x, y, o) { super(g, x, y, Object.assign({ w: 40, h: 40 }, o)); this.interactable = true; this.prompt = 'Chamar tamanduá'; this.tiles = o.tiles; }
   interact(g) {
     if (!g.save.allies.tamandua) { g.toast('Observe o tamanduá-bandeira que passeia por aqui antes.'); GC.Audio.play('deny'); return; }
-    if (g.player.char !== 'piata') { g.say('larinha', 'Meus sensores não convencem um tamanduá. Piatã, é com você!'); return; }
+    if (g.player.char !== 'piata') g.say('piata', 'Isso! Ele confia em você. Fica quietinha que ele mesmo abre a toca.');
     this.interactable = false;
     g.tamanduaDig(this);
   }
@@ -212,13 +212,24 @@ GC.Ent.terminal = class Terminal extends Thing {
   }
   interact(g) {
     if (this.done) return;
-    if (g.player.char !== 'larinha') { g.say('piata', 'Isso aqui é cheio de fios e senhas. Larinha entende disso melhor que eu.'); return; }
+    if (g.player.char !== 'larinha') { g.say('piata', 'Cheio de fios e senhas. Do meu jeito: Soco da Terra no gerador (Poder).'); return; }
     if (this.o.needs && !g.save.flags[this.o.needs]) { g.say('larinha', this.o.needsMsg || 'O sistema está sem energia. Falta liberar outra trava.'); return; }
     this.done = true; this.interactable = false;
     GC.Audio.play('open');
     if (this.o.flag) g.save.flags[this.o.flag] = true;
     g.trigger(this.o.opens);
     if (this.o.say) g.say('larinha', this.o.say);
+  }
+  // Piatã não tem a senha: o Soco da Terra derruba o gerador do equipamento ilegal
+  force(g) {
+    if (this.done) return false;
+    if (this.o.needs && !g.save.flags[this.o.needs]) { g.say('piata', this.o.needsMsgPiata || 'Ainda tem outra trava segurando. Primeiro ela.'); return true; }
+    this.done = true; this.interactable = false; this.broken = true;
+    GC.Audio.play('crash'); g.fx.sparks(this.cx, this.y + 6, 16); g.fx.smoke(this.cx, this.y, 4, true);
+    if (this.o.flag) g.save.flags[this.o.flag] = true;
+    g.trigger(this.o.opens);
+    g.say('piata', this.o.forceSay || 'Gerador fora do ar!');
+    return true;
   }
   draw(ctx, cam) {
     const x = this.sx(cam), y = this.sy(cam);
@@ -243,6 +254,8 @@ GC.Ent.lever = class Lever extends Thing {
     g.trigger(this.o.opens);
     if (this.o.say) g.say(g.player.char, this.o.say);
   }
+  // Larinha alcança a alavanca alta com a garra do drone
+  pullByDrone(g) { if (this.on) return; this.interact(g); g.fx.ring(this.cx, this.y, '#6ae8c8'); }
   draw(ctx, cam) {
     const x = this.sx(cam), y = this.sy(cam);
     ctx.fillStyle = '#4a4e56'; ctx.fillRect(x - 6, y - 5, 12, 5);

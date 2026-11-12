@@ -50,6 +50,7 @@ GC.Droplet = class Droplet {
     const L = g.level, T = GC.T;
     const t = L.at(this.x, this.y);
     if (t === T.POLLUTED) { g.cleanAt(Math.floor(this.x / 16), Math.floor(this.y / 16)); this.dead = true; g.fx.splashSmall(this.x, this.y); return; }
+    if (t === T.DEGRADED) { g.waterSoil(Math.floor(this.x / 16), Math.floor(this.y / 16)); this.dead = true; return; }
     if (t === T.WATER || GC.TP[t].solid) { this.dead = true; if (Math.random() < 0.3) g.fx.splashSmall(this.x, this.y); return; }
     for (const e of g.entities) {
       if (!e.wettable || e.dead) continue;

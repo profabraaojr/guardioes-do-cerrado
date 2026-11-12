@@ -1,7 +1,8 @@
 // Chefe: o COLOSSO, robô experimental de desmatamento do Projeto Horizonte (fictício).
 // Visual de robótica, sem semelhança com maquinário agrícola.
-// Cooperação: o drone de Larinha desliga os escudos dos núcleos de energia;
-// as sementes de Piatã travam os núcleos; o purificador apaga as queimadas.
+// Cada guardião vence do seu jeito. Piatã: faz o robô bater na pedra (escudos caem),
+// trava os núcleos com sementes e abafa o fogo com o Soco da Terra. Larinha: o drone
+// desliga os escudos; o Feixe (ou o jato) trava os núcleos; o purificador apaga o fogo.
 GC.Ent.boss = class Colosso extends GC.Thing {
   constructor(g, x, y, o) {
     super(g, x, y, Object.assign({ w: 112, h: 70 }, o));
@@ -27,12 +28,14 @@ GC.Ent.boss = class Colosso extends GC.Thing {
     if (this.state === 'sleep' || this.state === 'dead' || this.state === 'defeat') return false;
     for (const v of this.valves) {
       if (!v.alive || !GC.U.overlap(proj.box ? proj.box() : { x: proj.x - 2, y: proj.y - 2, w: 4, h: 4 }, this.valveBox(v))) continue;
-      if (kind !== 'seed') return false;
+      if (kind !== 'seed' && kind !== 'water') return false;
       if (!this.shieldsDown) {
-        GC.Audio.play('metal'); g.fx.sparks(proj.x, proj.y, 3);
-        if (!this.toldShield) { this.toldShield = true; g.say('larinha', 'Os núcleos têm escudo! Troque para mim e use o drone (Aliado) para analisar o robô.'); }
+        if (kind === 'seed' || Math.random() < 0.1) { GC.Audio.play('metal'); g.fx.sparks(proj.x, proj.y, 3); }
+        if (!this.toldShield) { this.toldShield = true; g.say('larinha', g.player.char === 'larinha' ? 'Os núcleos têm escudo! Use o drone (Aliado) para desligar os escudos.' : 'Os núcleos têm escudo! Faz ele investir contra a pedra: na batida, os escudos caem.'); }
         return true;
       }
+      // sementes travam; o jato provoca curto-circuito aos poucos
+      if (kind === 'water') { v.hp -= 0.06; v.flash = 0.05; if (Math.random() < 0.1) g.fx.steam(proj.x, proj.y, 1); if (v.hp <= 0) this.valveDown(v, g); return true; }
       v.hp -= 1; v.flash = 0.1; g.hitStop = GC.CFG.HITSTOP_BOSS; // pausa curta de impacto
       GC.Audio.play('metal'); g.fx.sparks(proj.x, proj.y, 6);
       if (v.hp <= 0) this.valveDown(v, g);
@@ -58,7 +61,7 @@ GC.Ent.boss = class Colosso extends GC.Thing {
   update(dt, g) {
     if (this.state !== 'sleep' && this.state !== 'defeat') {
       const hp = this.valves.reduce((n, v) => n + Math.max(0, v.hp), 0);
-      const labels = ['Derrube os escudos com o drone', 'Trave os núcleos com sementes', 'Último núcleo!'];
+      const labels = g.player.char === 'larinha' ? ['Derrube os escudos com o drone', 'Trave os núcleos com o Feixe', 'Último núcleo!'] : ['Faça o Colosso bater na pedra', 'Trave os núcleos com sementes', 'Último núcleo!'];
       g.bossBar = { name: 'Colosso', label: this.shieldsDown ? 'Escudos desligados: trave os núcleos!' : labels[3 - this.alive] || labels[0], value: hp / 15, step: 4 - this.alive, steps: 3 };
     } else if (this.state === 'defeat') g.bossBar = null;
     this.t += dt; this.flash -= dt; this.treadT += dt * Math.abs(this.vx || 0) / 30;
@@ -129,7 +132,7 @@ GC.Ent.boss = class Colosso extends GC.Thing {
         g.shake(1.5, 0.05);
         // derruba o que estiver na frente (fogo apagado pela poeira)
         if (this.x < A.x0 + 2) {
-          this.x = A.x0 + 2; this.state = 'idle'; this.st = 0.6; this.stun = 2.8;
+          this.x = A.x0 + 2; this.state = 'idle'; this.st = 0.6; this.stun = 3.6; // janela para travar os núcleos (sem drone, é a chance de Piatã)
           GC.Audio.play('crash'); g.shake(8, 0.6); g.fx.dust(this.x, this.bottom, 20);
           g.toast('O Colosso bateu e superaqueceu: os escudos caíram!');
         }

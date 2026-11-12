@@ -22,7 +22,7 @@
           <canvas id="charPortrait" width="40" height="40"></canvas>
           <div class="hud-char-txt"><b id="charName">Piatã</b><small id="charTool"></small></div>
           <div class="hud-keys">
-            <div class="hud-swap" title="Trocar personagem (L)"><kbd>L</kbd><canvas id="partnerPortrait" width="40" height="40"></canvas></div>
+            <div class="hud-swap radio" title="Parceiro no rádio"><span class="radio-tag">rádio</span><canvas id="partnerPortrait" width="40" height="40"></canvas></div>
             <div class="hud-ally"><kbd>Q</kbd><em id="allyState"></em></div>
             <div class="hud-ally hud-power"><kbd>F</kbd><em id="powerState"></em></div>
           </div>
@@ -76,7 +76,7 @@
       <section id="selectScreen" class="screen" hidden>
         <div class="select-wrap">
           <h2>Quem começa a trilha?</h2>
-          <p class="lead">Os dois seguem juntos. Troque de personagem a qualquer momento com <kbd>L</kbd> ou o botão <b>Trocar</b>: alguns desafios só se resolvem com a habilidade de cada um.</p>
+          <p class="lead">Escolha quem vai percorrer a trilha. O outro guardião acompanha pelo rádio da EcoPack. Cada um vence os desafios do seu jeito, e a escolha vale até o fim da partida: para jogar com o outro, comece um novo jogo.</p>
           <div class="chars">
             <button type="button" class="char-card" data-char="piata" aria-pressed="true">
               <canvas width="56" height="56"></canvas>
@@ -174,7 +174,6 @@
     <div class="actions">
       <button data-action="ally" class="b small">Aliado</button>
       <button data-action="power" class="b power">Poder</button>
-      <button data-action="swap" class="b small">Trocar</button>
       <button data-action="tool" class="b">Usar</button>
       <button data-action="jump" class="b big">Pular</button>
     </div>

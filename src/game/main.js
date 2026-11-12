@@ -73,6 +73,7 @@
   }
 
   function goTitle() {
+    GC.activeChar = null;
     if (game && game.player.spraying) A.spray(false);
     game = null;
     GC.HUD.clearTransient();
@@ -137,6 +138,8 @@
     A.init();
     GC.HUD.clearTransient();
     GC.HUD.reset();
+    save.char = selected; // a escolha vale para a partida inteira
+    GC.activeChar = selected;
     game = new GC.Game('fase1', save, selected);
     game.onRespawn = () => {
       const ch = game.player.char;
@@ -148,7 +151,7 @@
     wire(game);
     show(null);
     setMode('play');
-    if (!save.flags.started) { save.flags.started = true; GC.HUD.toast('Troque de personagem com L (ou o botão Trocar). Aliado: Q.'); }
+    if (!save.flags.started) { save.flags.started = true; GC.HUD.toast((selected === 'piata' ? 'Piatã' : 'Larinha') + ' segue a trilha. ' + (selected === 'piata' ? 'Larinha' : 'Piatã') + ' acompanha pelo rádio.'); }
   }
   function wire(g) { g.onEnd = () => setTimeout(showEnding, 400); }
 
@@ -219,7 +222,8 @@
   // ——— Botões ———
   const click = (id, fn) => $(id).addEventListener('click', () => { A.init(); A.play('swap'); fn(); });
   click('btnNew', () => { GC.Mobile.onStart(); startIntro(); });
-  click('btnContinue', () => { GC.Mobile.onStart(); save = GC.Save.load() || GC.Save.blank(); openSelect(); });
+  // Continuar segue com o guardião da partida salva; a escolha só aparece em Novo jogo
+  click('btnContinue', () => { GC.Mobile.onStart(); save = GC.Save.load() || GC.Save.blank(); if (save.char === 'piata' || save.char === 'larinha') { selected = save.char; startGame(); } else openSelect(); });
   click('btnGuide', () => openGuide('title'));
   click('btnInstall', () => { const panel = GC.Mobile.install(); if (panel) { show('installScreen'); mode = 'controls'; } });
   click('btnInstallBack', goTitle);
@@ -231,7 +235,7 @@
   const KEY_LABELS = {
     left: ['Andar para a esquerda', 'Direcional ou analógico'], right: ['Andar para a direita', 'Direcional ou analógico'],
     up: ['Cima · escalar · mirar · interagir', 'Direcional ou analógico'], down: ['Baixo · agachar · deslizar', 'Direcional ou analógico'],
-    jump: ['Pular · nadar', 'A'], tool: ['Usar ferramenta', 'X ou RT'], swap: ['Trocar personagem', 'Y'], ally: ['Aliado', 'B ou RB'],
+    jump: ['Pular · nadar', 'A'], tool: ['Usar ferramenta', 'X ou RT'], ally: ['Aliado', 'B ou RB'],
     power: ['Poder', 'LT ou L3'], interact: ['Interagir', 'LB'], pause: ['Pausa', 'Start'], confirm: ['Confirmar (diálogos)', 'A']
   };
   function renderKeys() {

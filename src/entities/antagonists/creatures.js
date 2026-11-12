@@ -82,12 +82,14 @@
     update(dt, g) {
       this.t += dt; this.flash -= dt;
       if (this.dead) return;
+      // sem focos de incêndio por perto, a fuligem assenta e elas se recuperam aos poucos
+      if (!g.entities.some((f) => f instanceof GC.Fire && !f.dead && Math.abs(f.cx - this.cx) < 220)) { this.cleanse(dt * 0.22, g); if (this.dead) return; }
       const p = g.player;
       const near = Math.abs(p.cx - this.cx) < 140;
       this.ox = U.approach(this.ox, near ? p.cx - this.w / 2 : this.ox, 28 * dt);
       this.x = this.ox + Math.sin(this.t * 1.7) * 18;
       this.y = this.baseY + Math.sin(this.t * 2.6) * 14 + (near ? Math.max(-20, Math.min(20, p.cy - 30 - this.baseY)) : 0);
-      this.hurtOnTouch(g, 'Mariposas de fuligem! Lave-as com o jato d’água.');
+      this.hurtOnTouch(g, g.player.char === 'piata' ? 'Mariposas de fuligem! Apague o fogo: sem fumaça, a fuligem assenta.' : 'Mariposas de fuligem! Lave-as com o jato d’água.');
     }
     onRecover(g) { g.addEntity(new GC.Ent.borboletas(g, this.x, this.y, {})); g.toast('A fuligem saiu: eram borboletas!'); }
     draw(ctx, cam) {

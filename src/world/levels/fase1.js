@@ -29,7 +29,7 @@ GC.Levels.fase1 = {
     B.ent('araraVoo', 0, 28, { x0: 0, x1: 66, lift: 150 });
     B.ent('insetos', 22, 28, {});
     B.ent('insetos', 38, 28, { kind: 'libelula' });
-    B.ent('sign', 8, 28, { title: 'Bem-vindos, guardiões', text: 'Teclado: ← → para andar, ESPAÇO para pular, L para trocar entre Piatã e Larinha, F para o poder especial.\nToque: direcional à esquerda; Pular, Usar, Trocar e Aliado à direita.\nCada um tem habilidades próprias: Piatã salta mais alto e escala rápido; Larinha opera terminais e tem o purificador de água.' });
+    B.ent('sign', 8, 28, { title: 'Bem-vindos, guardiões', text: 'Teclado: ← → para andar, ESPAÇO para pular, J para a ferramenta, Q para o aliado, F para o poder especial.\nToque: direcional à esquerda; Pular, Usar, Poder e Aliado à direita.\nCada guardião vence os desafios do seu jeito: Piatã salta mais alto e escala rápido; Larinha opera terminais e tem o purificador de água.' });
     B.ground(13, 17, 26);
     seeds(13, 15, 26);
     B.fill(16, 24, 17, 25, T.CRACKED);
@@ -53,7 +53,7 @@ GC.Levels.fase1 = {
     B.ent('sign', 53, 28, { title: 'Observar a natureza', text: 'Fique parado perto de plantas e animais marcados com um brilho verde para registrá-los no Guia de Campo. Larinha fotografa; Piatã observa os detalhes.' });
     B.ent('talk', 54, 28, { id: 'machines' });
     B.ent('chainsaw', 57, 28, { x0: 54, x1: 61 });
-    // solo degradado e barranco: Piatã sobe direto; Larinha precisa da muda
+    // solo degradado e barranco: Piatã sobe direto; Larinha irriga o solo e a muda vira degrau
     B.fill(58, 28, 61, 28, T.DEGRADED);
     B.ground(62, 80, 24);
     B.ent('talk', 59, 28, { id: 'ledge' });
@@ -114,10 +114,10 @@ GC.Levels.fase1 = {
     seeds(144, 150, 32, 2);
     B.ent('pickup', 148, 32, { kind: 'heartUp', id: 'heartUp1' });
     B.ent('pickup', 145, 32, { kind: 'rare', id: 'rare3' });
-    // cerca do Projeto Horizonte (Larinha desativa)
+    // cerca do Projeto Horizonte (Larinha desliga no terminal; Piatã derruba o gerador com o Soco da Terra)
     B.ent('checkpoint', 151, 28, { id: 'cpB2' });
     B.ent('talk', 152, 28, { id: 'fence' });
-    B.ent('terminal', 154, 28, { flag: 'fenceB', opens: 'fenceB', say: 'Cerca desligada. Os bichos voltam a passar por aqui.' });
+    B.ent('terminal', 154, 28, { flag: 'fenceB', opens: 'fenceB', say: 'Cerca desligada. Os bichos voltam a passar por aqui.', forceSay: 'Gerador no chão. A cerca apagou e os bichos voltam a passar.' });
     B.ent('gate', 156, 28, { name: 'fenceB', rows: 7, flag: 'fenceB', kind: 'fence' });
     // abismo com cipó
     B.ent('sign', 157, 28, { title: 'Cipó', text: 'Pule para agarrar o cipó. Use ← → para ganhar balanço e ESPAÇO para soltar no ponto mais alto.' });
@@ -203,11 +203,12 @@ GC.Levels.fase1 = {
     // território da onça
     B.ent('talk', 335, 24, { id: 'onca_warn' });
     B.ent('onca', 341, 24, { zx0: 336, zx1: 347 });
-    // comporta com duas travas (cooperação)
+    // comporta com duas travas: Piatã salta até a alavanca e derruba a trava eletrônica;
+    // Larinha puxa a alavanca com o drone e abre o terminal
     B.ent('talk', 348, 24, { id: 'gate' });
-    B.fill(349, 20, 351, 20, T.ROCK); // saliência alta: só o salto de Piatã alcança
-    B.ent('lever', 350, 20, { flag: 'leverD', opens: 'leverD', say: 'Trava mecânica liberada! Agora é com a Larinha no terminal.' });
-    B.ent('terminal', 353, 24, { flag: 'gateD', opens: 'gateD', needs: 'leverD', needsMsg: 'A trava mecânica lá em cima ainda está fechada. Piatã consegue alcançar.', say: 'Comporta aberta!' });
+    B.fill(349, 20, 351, 20, T.ROCK); // saliência alta: só o salto de Piatã (ou o drone de Larinha) alcança
+    B.ent('lever', 350, 20, { flag: 'leverD', opens: 'leverD', say: 'Trava mecânica liberada! Falta a trava eletrônica lá embaixo.' });
+    B.ent('terminal', 353, 24, { flag: 'gateD', opens: 'gateD', needs: 'leverD', needsMsg: 'A trava mecânica lá em cima ainda está fechada. O drone (Aliado) alcança a alavanca.', needsMsgPiata: 'A trava mecânica lá em cima ainda segura a comporta. Primeiro a alavanca.', forceSay: 'Trava eletrônica fora do ar. Comporta aberta!', say: 'Comporta aberta!' });
     B.ent('gate', 356, 24, { name: 'gateD', rows: 6, flag: 'gateD', kind: 'gate' });
     B.ent('checkpoint', 358, 24, { id: 'cpD' });
     B.ent('pickup', 360, 24, { kind: 'fruit', lift: 4 });

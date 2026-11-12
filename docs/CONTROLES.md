@@ -6,7 +6,7 @@ Este documento registra como a entrada é lida, quais constantes controlam a sen
 
 Teclado, controle e toque escrevem em fontes separadas (`src.key`, `src.pad`, `src.touch`). A cada passo de 1/60 s, `GC.Input.update()` junta as três em um estado por ação, com `down`, `pressed` e `released`; os dois últimos valem um único passo. Toques mais curtos que um quadro ficam registrados em `taps` e não se perdem.
 
-Ações: `left`, `right`, `up`, `down`, `jump`, `tool`, `swap`, `ally`, `power`, `interact`, `pause`, `confirm`.
+Ações: `left`, `right`, `up`, `down`, `jump`, `tool`, `ally`, `power`, `interact`, `pause`, `confirm`. Não existe ação de troca: cada partida tem um único guardião, escolhido no início (veja abaixo).
 
 Eixos: `GC.Input.axisX` e `axisY`, de −1 a 1. Teclado e cruz valem −1, 0 ou 1. No analógico, abaixo de `DEADZONE` (0,25) o valor é zero e acima dele é reescalado para 0..1. Na horizontal, a velocidade de corrida acompanha a inclinação, com mínimo de `ANALOG_MIN` (35%). Na vertical, ↑ e ↓ só contam a partir de `AXIS_DIGITAL` (0,5), para que um leve toque no analógico não faça o guardião escalar nem interagir.
 
@@ -62,6 +62,29 @@ Os impulsos fixos do código (topo do paredão, topo do cipó, soltar do cipó, 
 - O palco é recalculado em `resize`, `orientationchange` e `visualViewport.resize`. As margens respeitam `env(safe-area-inset-*)` nos quatro lados.
 - Tela cheia ao iniciar a partida no toque. A trava de orientação horizontal só é pedida no Android; no iPhone, a tela cheia vem da instalação na Tela de Início (PWA).
 
+## Um guardião por partida
+
+A escolha feita em "Novo jogo" fica gravada no salvamento (`save.char`), e "Continuar" segue com o mesmo guardião. Só o escolhido aparece em campo. O parceiro participa da história pelo rádio da EcoPack: nos diálogos, o retrato dele recebe tom verde, linhas de transmissão e a etiqueta "rádio". Falas que só fazem sentido para um dos guardiões usam o campo `only: 'piata' | 'larinha'` em `src/data/dialogs.js`.
+
+Cada trecho do Capítulo 1 tem uma solução para cada guardião:
+
+| Trecho | Piatã | Larinha |
+| --- | --- | --- |
+| Barranco com solo degradado | salta direto (ou planta uma muda com sementes) | agachada (↓), irriga o solo com o jato: as sementes adormecidas brotam e a muda vira degrau |
+| Focos de incêndio | Soco da Terra sobre a chama (terra abafa o fogo) | purificador (jato d'água) |
+| Mariposas de fuligem | apagado o fogo, a fuligem assenta e elas se recuperam sozinhas | jato d'água lava a fuligem |
+| Cerca elétrica | Soco da Terra derruba o gerador do terminal | desliga no terminal |
+| Cupinzeiro do tamanduá | chama o tamanduá | também chama, com orientação de Piatã pelo rádio |
+| Riacho contaminado | sementes desligam o poluidor; o riacho se limpa sozinho | jato desliga o poluidor e limpa a água |
+| Draga: mangueiras | sementes (de longe, ou pulando e mirando para baixo) | Feixe do Satélite |
+| Draga: vapor de mercúrio | Soco da Terra perto da nuvem: o tremor espalha o vapor | jato d'água ou Feixe |
+| Draga: painel | Soco da Terra no painel | desliga no painel |
+| Comporta: alavanca alta | salto alto | o drone (Aliado) puxa com a garra |
+| Comporta: trava eletrônica | Soco da Terra | terminal |
+| Colosso: escudos | fazer o robô investir contra a pedra (fica 3,6 s atordoado) | drone (Aliado) ou a mesma batida na pedra |
+| Colosso: núcleos | sementes (a uns 70 px do corpo, ou do galho mirando para baixo) | Feixe do Satélite (2,5 por acerto) ou jato |
+| Fogo na arena | Soco da Terra | purificador |
+
 ## Testes
 
-Os testes com Playwright cobrem: coyote time, memória de pulo, tolerância de quina, zona morta e velocidade proporcional do analógico, botão A do controle, remapeamento persistente, pausa automática (foco e controle), o teclado no computador e as resoluções 360×640, 390×844, 412×915, 768×1024, 1366×768 e 1920×1080 nas duas orientações.
+Os testes com Playwright cobrem as rotas acima com cada guardião (18 verificações, por teclado) e também: coyote time, memória de pulo, tolerância de quina, zona morta e velocidade proporcional do analógico, botão A do controle, remapeamento persistente, pausa automática (foco e controle), o teclado no computador e as resoluções 360×640, 390×844, 412×915, 768×1024, 1366×768 e 1920×1080 nas duas orientações.

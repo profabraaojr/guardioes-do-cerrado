@@ -2,11 +2,12 @@
 // Cada ação expõe: down (segurada), pressed e released (valem um quadro de simulação).
 // Eixos analógicos: axisX e axisY, de -1 a 1 (teclado e cruz valem -1, 0 ou 1).
 GC.Input = (function () {
-  const ACTIONS = ['left', 'right', 'up', 'down', 'jump', 'tool', 'swap', 'ally', 'power', 'interact', 'pause', 'confirm'];
+  // Uma partida tem um único guardião: não há ação de troca (a escolha vale até o próximo jogo).
+  const ACTIONS = ['left', 'right', 'up', 'down', 'jump', 'tool', 'ally', 'power', 'interact', 'pause', 'confirm'];
   // Mapa padrão do teclado (pode ser remapeado na tela de Controles; o padrão não muda)
   const DEFAULT_KEYS = {
     left: ['ArrowLeft', 'KeyA'], right: ['ArrowRight', 'KeyD'], up: ['ArrowUp', 'KeyW'], down: ['ArrowDown', 'KeyS'],
-    jump: ['Space', 'KeyK', 'KeyZ'], tool: ['KeyJ', 'KeyX'], swap: ['KeyL', 'KeyC'], ally: ['KeyQ', 'KeyV'],
+    jump: ['Space', 'KeyK', 'KeyZ'], tool: ['KeyJ', 'KeyX'], ally: ['KeyQ', 'KeyV'],
     power: ['KeyF', 'KeyB'], interact: ['KeyE'], pause: ['Escape', 'KeyP'], confirm: ['Enter']
   };
   const KEYS_STORE = 'guardioes-teclas', KEYS_VERSION = 1;
@@ -116,7 +117,7 @@ GC.Input = (function () {
       P.left = b(14) || ax < -0.01; P.right = b(15) || ax > 0.01;
       P.up = b(12) || ay < -D; P.down = b(13) || ay > D;
       if (b(14) || b(15)) src.padAxis.x = b(14) ? -1 : 1;
-      P.jump = b(0); P.confirm = b(0); P.tool = b(2) || b(7); P.swap = b(3);
+      P.jump = b(0); P.confirm = b(0); P.tool = b(2) || b(7);
       P.ally = b(1) || b(5); P.interact = b(4); P.pause = b(9); P.power = b(6) || b(10);
       if (Object.values(P).some(Boolean)) lastDevice = 'gamepad';
       break;

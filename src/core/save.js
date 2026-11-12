@@ -6,6 +6,7 @@ GC.Save = (function () {
     return {
       version: 1,
       level: 'fase1',
+      char: null,              // guardião escolhido no início da partida (piata ou larinha)
       checkpoint: null,        // {id, x, y}
       guide: [],               // ids do Guia de Campo descobertos
       allies: {},              // arara, tamandua, capivara, onca
