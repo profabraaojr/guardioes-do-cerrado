@@ -43,7 +43,17 @@ GC.Phys = (function () {
       if (best < Infinity && newBot >= best) { ny = best - b.h; landed = true; }
     } else if (dy < 0) {
       const ty = Math.floor(ny / S);
-      for (let tx = tx0; tx <= tx1; tx++) if (T[level.tile(tx, ty)].solid) { ny = (ty + 1) * S; bonk = true; break; }
+      const hits = (x) => { const a = Math.floor(x / S), c = Math.floor((x + b.w - 0.01) / S); for (let tx = a; tx <= c; tx++) if (T[level.tile(tx, ty)].solid) return true; return false; };
+      if (hits(b.x)) {
+        // tolerância de quina: se só a beirada da cabeça raspa, empurra de lado e segue subindo
+        let fixed = false;
+        if (b.cornerFix && (!b.state || b.state === 'normal')) {
+          const rows = [ty, Math.floor((b.y + b.h - 0.01) / S)];
+          const free = (x) => { if (hits(x)) return false; const a = Math.floor(x / S), c = Math.floor((x + b.w - 0.01) / S); for (let r = Math.floor(b.y / S); r <= rows[1]; r++) for (let tx = a; tx <= c; tx++) if (T[level.tile(tx, r)].solid) return false; return true; };
+          for (let d = 1; d <= b.cornerFix && !fixed; d++) for (const sg of [-1, 1]) if (free(b.x + sg * d)) { b.x += sg * d; fixed = true; break; }
+        }
+        if (!fixed) { ny = (ty + 1) * S; bonk = true; }
+      }
     }
     b.y = ny;
     return { landed, bonk };

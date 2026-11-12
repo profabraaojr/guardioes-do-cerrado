@@ -4,6 +4,7 @@ GC.Player = class Player {
     this.g = g;
     this.setChar(char);
     this.w = 10; this.h = 22;
+    this.cornerFix = GC.CFG.CORNER_FIX; // tolerância de quina na física
     this.x = x - this.w / 2; this.y = y - this.h;
     this.vx = 0; this.vy = 0;
     this.facing = 1;
@@ -26,6 +27,9 @@ GC.Player = class Player {
   get cx() { return this.x + this.w / 2; }
   get cy() { return this.y + this.h / 2; }
   get bottom() { return this.y + this.h; }
+
+  // gravidade do guardião: maior na queda que na subida (ver config.js)
+  grav() { const C = GC.CFG; return this.vy < 0 ? C.RISE_G : C.RISE_G * C.FALL_MULT; }
 
   setHeight(h) { this.y += this.h - h; this.h = h; }
 
@@ -70,7 +74,7 @@ GC.Player = class Player {
       this.netT -= dt;
       if (I.pressed('jump') || I.pressed('left') || I.pressed('right') || I.pressed('tool')) this.netT -= 0.2;
       this.vx = 0; this.buffer = 0;
-      this.vy = Math.min(this.vy + (this.state === 'swim' ? C.SWIM_GRAV : C.GRAVITY) * dt, this.state === 'swim' ? 60 : C.MAX_FALL);
+      this.vy = Math.min(this.vy + (this.state === 'swim' ? C.SWIM_GRAV : this.grav()) * dt, this.state === 'swim' ? 60 : C.MAX_FALL);
       GC.Phys.move(this, dt, L);
       if (this.spraying) { this.spraying = false; A.spray(false); }
       return;
@@ -79,6 +83,8 @@ GC.Player = class Player {
     const left = !lock && I.down('left'), right = !lock && I.down('right');
     const up = !lock && I.down('up'), down = !lock && I.down('down');
     const dir = (right ? 1 : 0) - (left ? 1 : 0);
+    // analógico: inclinação parcial anda mais devagar (teclado e toque valem 1)
+    const mag = lock ? 0 : Math.max(C.ANALOG_MIN, Math.min(1, Math.abs(I.axisX) || (dir ? 1 : 0)));
     if (!lock && I.pressed('jump')) this.buffer = C.BUFFER; else this.buffer -= dt;
     const jumpHeld = !lock && I.down('jump');
 
@@ -102,12 +108,12 @@ GC.Player = class Player {
         if (this.onGround && (down || lowCeil)) { if (this.h !== 14) this.setHeight(14); this.crouch = true; }
         else if (this.h !== 22 && !lowCeil) { this.setHeight(22); this.crouch = false; }
         const sneak = this.crouch && this.onGround && dir !== 0;
-        const max = this.crouch && this.onGround ? C.SNEAK_MAX : this.ph.run;
+        const max = this.crouch && this.onGround ? C.SNEAK_MAX : this.ph.run * mag;
         const acc = this.onGround ? C.RUN_ACC : C.AIR_ACC;
         if (dir) { this.vx = U.approach(this.vx, dir * max, acc * dt); if (!this.spraying) this.facing = dir; }
-        else this.vx = U.approach(this.vx, 0, (this.onGround ? C.FRICTION : C.AIR_ACC * 0.35) * dt);
+        else this.vx = U.approach(this.vx, 0, (this.onGround ? C.FRICTION : C.AIR_FRICTION) * dt);
         this.sneaking = sneak;
-        this.vy = Math.min(this.vy + C.GRAVITY * dt, C.MAX_FALL);
+        this.vy = Math.min(this.vy + this.grav() * dt, C.MAX_FALL);
         this.coyote = this.onGround ? C.COYOTE : this.coyote - dt;
         if (this.buffer > 0 && this.coyote > 0 && !lowCeil) {
           const below = L.at(this.cx, this.bottom + 2);
@@ -119,6 +125,7 @@ GC.Player = class Player {
         this.dropThroughSync();
         GC.Phys.move(this, dt, L);
         if (!wasGround && this.onGround && prevVy > 220) { A.play('land'); g.fx.dust(this.cx, this.bottom, 5); g.effect('brilho', 'dust', this.cx, this.bottom - 8); }
+        else if (!wasGround && this.onGround && prevVy > 120) g.fx.dust(this.cx, this.bottom, 2);
         // agarrar paredão
         if (!this.onGround && this.vy > -80 && dir && this.clingCd <= 0 && this.climbableAt(L, dir).any) {
           this.state = 'climb'; this.climbSide = dir; this.facing = dir; this.vx = 0; this.vy = 0;
@@ -146,7 +153,7 @@ GC.Player = class Player {
           // terminou sob teto baixo: segue abaixado
           this.setHeight(14); this.crouch = true; this.state = 'normal'; break;
         }
-        this.vy = Math.min(this.vy + C.GRAVITY * dt, C.MAX_FALL);
+        this.vy = Math.min(this.vy + this.grav() * dt, C.MAX_FALL);
         GC.Phys.move(this, dt, L);
         const done = !this.onSlope && (this.slideT <= 0 || Math.abs(this.vx) < 25);
         const stopSlope = this.onSlope && !down;
@@ -173,7 +180,7 @@ GC.Player = class Player {
         if (dir === -side) { this.state = 'normal'; this.clingCd = 0.25; break; }
         if (!c.top && c.bot && up) {
           // topo do paredão: impulso para subir na borda
-          this.state = 'normal'; this.vy = -250; this.vx = side * 90; this.clingCd = 0.3; this.jumpCut = true;
+          this.state = 'normal'; this.vy = -250 * C.IMPULSE; this.vx = side * 90; this.clingCd = 0.3; this.jumpCut = true;
           break;
         }
         if (!c.any) { this.state = 'normal'; break; }
@@ -189,7 +196,7 @@ GC.Player = class Player {
         if (this.vx || this.vy) this.animT += dt * 0.5;
         GC.Phys.move(this, dt, L);
         if (this.buffer > 0) { this.buffer = 0; this.state = 'normal'; this.vy = -C.JUMP_V * 0.8; this.jumpCut = false; A.play('jump'); break; }
-        if (!this.vineAt(L)) { this.state = 'normal'; if (up) { this.vy = -240; this.jumpCut = true; } }
+        if (!this.vineAt(L)) { this.state = 'normal'; if (up) { this.vy = -240 * C.IMPULSE; this.jumpCut = true; } }
         if (this.onGround && down) this.state = 'normal';
         break;
       }
@@ -201,7 +208,7 @@ GC.Player = class Player {
         if (this.buffer > 0) {
           this.buffer = 0;
           const v = c.release();
-          this.vx = v.x; this.vy = Math.min(v.y, 0) - 230; this.jumpCut = true;
+          this.vx = v.x; this.vy = Math.min(v.y, 0) - 230 * C.IMPULSE; this.jumpCut = true;
           this.state = 'normal'; this.swing = null; this.swingCd = true;
           setTimeout(() => (this.swingCd = false), 350);
           A.play('jump');
@@ -314,6 +321,7 @@ GC.Player = class Player {
         const oy = this.aim === 'up' ? 16 : this.aim === 'down' ? 10 : 13;
         g.addProjectile(new GC.Seed(g, this.cx + f * 10, this.bottom - oy, vx, vy));
         this.firingT = 0.1; this.toolUsedT = 0;
+        g.fx.dust(this.cx + f * 12, this.bottom - oy, 1); // partícula de disparo
         A.play('seed');
       }
       if (this.spraying) { this.spraying = false; A.spray(false); }
@@ -350,7 +358,7 @@ GC.Player = class Player {
       const s = this.cx < fromX ? -1 : 1;
       if (this.state === 'climb' || this.state === 'vine') this.state = 'normal';
       if (this.state === 'slide') this.endSlide(g.level);
-      this.vx = s * 170; this.vy = this.state === 'swim' ? -60 : -230;
+      this.vx = s * 170; this.vy = this.state === 'swim' ? -60 : -230 * GC.CFG.IMPULSE;
     }
     if (g.hearts <= 0) this.die(g);
     return true;

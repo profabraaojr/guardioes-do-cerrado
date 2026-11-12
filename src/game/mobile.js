@@ -22,7 +22,8 @@ GC.Mobile = (function () {
         else if (d.webkitRequestFullscreen) d.webkitRequestFullscreen();
       }
     } catch (e) { /* o navegador recusou: segue sem tela cheia */ }
-    try { if (screen.orientation && screen.orientation.lock) await screen.orientation.lock('landscape'); } catch (e) { /* nem todo navegador permite travar a orientação */ }
+    // trava de orientação só no Android (o iOS não oferece; lá a instalação na Tela de Início resolve)
+    try { if (isAndroid && screen.orientation && screen.orientation.lock) await screen.orientation.lock('landscape'); } catch (e) { /* nem todo navegador permite travar a orientação */ }
   }
   function exitFullscreen() { try { (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch (e) {} }
   function toggleFullscreen() { if (fsElement()) exitFullscreen(); else enterFullscreen(); }

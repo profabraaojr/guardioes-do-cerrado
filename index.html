@@ -124,20 +124,10 @@
       <section id="controlsScreen" class="screen" hidden>
         <div class="panel wide">
           <h2>Controles</h2>
-          <table class="keys">
-            <tr><th>Andar</th><td><kbd>←</kbd> <kbd>→</kbd> ou <kbd>A</kbd> <kbd>D</kbd></td></tr>
-            <tr><th>Pular · nadar</th><td><kbd>Espaço</kbd> <kbd>K</kbd> <kbd>Z</kbd></td></tr>
-            <tr><th>Escalar</th><td>segure a direção contra o paredão; <kbd>↑</kbd> <kbd>↓</kbd></td></tr>
-            <tr><th>Deslizar · andar abaixado</th><td>correndo, <kbd>↓</kbd> · segure <kbd>↓</kbd> e ande</td></tr>
-            <tr><th>Usar ferramenta</th><td><kbd>J</kbd> <kbd>X</kbd> (com <kbd>↑</kbd> mira para cima)</td></tr>
-            <tr><th>Trocar personagem</th><td><kbd>L</kbd> <kbd>C</kbd></td></tr>
-            <tr><th>Aliado</th><td><kbd>Q</kbd> <kbd>V</kbd></td></tr>
-            <tr><th>Poder</th><td><kbd>F</kbd> <kbd>B</kbd> · Piatã: Soco da Terra · Larinha: Feixe do Satélite</td></tr>
-            <tr><th>Interagir</th><td><kbd>↑</kbd> ou <kbd>E</kbd></td></tr>
-            <tr><th>Pausa</th><td><kbd>Esc</kbd> <kbd>P</kbd></td></tr>
-            <tr><th>Observar</th><td>fique parado perto do brilho verde</td></tr>
-          </table>
-          <p class="note">Também funciona com controle (gamepad) e com toque na tela.</p>
+          <div class="keys-wrap"><table class="keys remap" id="keysTable"></table></div>
+          <p class="note" id="keysHint">Toque ou clique numa tecla para trocá-la e depois aperte a nova. Esc cancela.</p>
+          <p class="note">Escalar: segure a direção contra o paredão e use ↑ ↓. Deslizar: correndo, ↓. Andar abaixado: segure ↓. Observar: fique parado perto do brilho verde. Também funciona com controle (gamepad) e com toque na tela.</p>
+          <div class="row-btns"><button id="btnKeysReset" type="button" class="btn">Restaurar teclas padrão</button></div>
           <button id="btnControlsBack" type="button" class="btn">Voltar</button>
         </div>
       </section>

@@ -96,7 +96,7 @@ GC.Powers = (function () {
     for (const e of g.entities) if (e instanceof GC.Infrator && e.active && Math.abs(e.cx - p.cx) < 56 && Math.abs(e.bottom - p.bottom) < 20 && !U.overlap(box, e)) { e.stun = 0.8; e.state = 'stunned'; }
     g.effect('brilho', 'impacto', at.x, at.y);
     g.fx.dust(at.x, p.bottom, 10);
-    g.shake(hit ? 5 : 2.5, 0.2);
+    g.shake(hit ? GC.CFG.SHAKE_BLAST + 1 : GC.CFG.SHAKE_PUNCH, 0.2);
     GC.Audio.play(hit ? 'crash' : 'land');
     return hit;
   }
@@ -168,7 +168,7 @@ GC.Ent.feixe = class Feixe extends GC.Thing {
       if (e instanceof GC.Ent.draga) { if (e.phaseIdx === 1) { const c = e.cloudBox(); if (this.tx > c.x - 16 && this.tx < c.x + c.w + 16) any = GC.Powers.affect(g, 'feixe', e, at) || any; } continue; }
       if (GC.U.overlap(zone, b)) any = GC.Powers.affect(g, 'feixe', e, at) || any;
     }
-    g.shake(4, 0.25); this.flash = 0.12;
+    g.shake(GC.CFG.SHAKE_BEAM, 0.25); this.flash = 0.12;
     GC.Audio.play('engine');
     g.fx.ring(this.tx, this.gy - 2, '#bff8ff'); g.fx.ring(this.tx, this.gy - 2, '#fff2a0');
     void any;

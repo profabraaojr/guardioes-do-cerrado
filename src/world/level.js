@@ -184,6 +184,7 @@ GC.Level = class Level {
         const surfY = (ty * S - oy) * K, h = Math.min(depth * S, 26) * K, xs = (tx * S - ox) * K, w = (end - tx + 1) * S * K;
         if (surfY - h > 0 && w > 0) {
           // uma única cópia da faixa acima da superfície; as fatias saem do canvas auxiliar
+          if (Level.reflectBuf && Level.reflectBuf[0].width < GC.CFG.W * K + 64) Level.reflectBuf = null; // tela ficou mais larga
           const R = Level.reflectBuf || (Level.reflectBuf = GC.U.makeCanvas(GC.CFG.W * K + 64, 64));
           const bw = Math.min(w, R[0].width), bh = Math.min(h, R[0].height);
           R[1].clearRect(0, 0, bw, bh);

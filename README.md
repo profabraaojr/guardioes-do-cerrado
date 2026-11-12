@@ -24,18 +24,22 @@ python3 -m http.server 8000
 
 Depois acesse `http://localhost:8000`.
 
-| Ação | Teclado | Toque |
-| --- | --- | --- |
-| Andar | ← → ou A D | direcional |
-| Pular, nadar | Espaço, K, Z | Pular |
-| Escalar | direção contra o paredão, ↑ ↓ | direcional |
-| Deslizar / andar abaixado | ↓ correndo / segurar ↓ | direcional |
-| Usar ferramenta | J, X (↑ mira para cima) | Usar |
-| Trocar personagem | L, C | Trocar |
-| Aliado | Q, V | Aliado |
-| Poder especial | F, B | Poder |
-| Interagir | ↑ ou E | direcional ↑ |
-| Pausa | Esc, P | botão II |
+| Ação | Teclado (padrão) | Controle (gamepad) | Toque |
+| --- | --- | --- | --- |
+| Andar | ← → ou A D | direcional ou analógico (velocidade proporcional) | direcional |
+| Pular, nadar | Espaço, K, Z (segurar pula mais alto) | A | Pular |
+| Escalar | direção contra o paredão, ↑ ↓ | direcional ou analógico | direcional |
+| Deslizar / andar abaixado | ↓ correndo / segurar ↓ | direcional ou analógico | direcional |
+| Descer de plataforma | ↓ + pular | ↓ + A | direcional + Pular |
+| Usar ferramenta | J, X (↑ mira para cima; segurar repete) | X ou RT | Usar |
+| Trocar personagem | L, C | Y | Trocar |
+| Aliado | Q, V | B ou RB | Aliado |
+| Poder especial | F, B | LT ou L3 | Poder |
+| Interagir | ↑ ou E | LB | direcional ↑ |
+| Pausa | Esc, P | Start | botão II |
+| Confirmar (diálogos) | Enter ou pulo | A | Pular |
+
+As teclas podem ser trocadas na tela **Controles** e ficam gravadas no navegador; o botão "Restaurar teclas padrão" volta ao mapa acima. O analógico tem zona morta de 0,25. O jogo pausa sozinho quando a aba vai para segundo plano ou o controle é desconectado.
 
 O jogo também aceita gamepad. O progresso é salvo no navegador a cada marco de trilha (fita amarela).
 
@@ -99,4 +103,5 @@ Pontos principais:
 - `docs/NARRATIVA.md`: personagens, diretrizes narrativas e padrão visual dos diálogos.
 - `docs/VISUAL.md`: revisão visual, pipeline de spritesheets e pendências.
 - `docs/ANTAGONISTAS.md`: sistema de antagonistas (humanos, criaturas, máquinas e chefes) e como estendê-lo.
+- `docs/CONTROLES.md`: entrada (teclado, controle, toque), constantes de física, câmera e ajuste de tela.
 - `docs/PESQUISA.md`: fontes consultadas para os lugares e as espécies.

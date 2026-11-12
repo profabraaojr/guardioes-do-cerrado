@@ -18,23 +18,36 @@
   let titleLevel = null;
 
   // ——— Dimensionamento ———
+  // Ajuste de tela: altura lógica fixa (270); a largura cresce até 21:9 em telas compridas.
+  // A ampliação é inteira em pixels FÍSICOS (considera o devicePixelRatio) quando isso
+  // ocupa ao menos INT_SCALE_MIN do espaço; senão, fracionária com image-rendering: pixelated.
   function resize() {
-    const stage = $('stage');
-    const app = $('app');
+    const stage = $('stage'), app = $('app'), cv = $('screen');
     const portrait = window.innerHeight > window.innerWidth;
     const touch = document.body.classList.contains('touch');
-    const availW = app.clientWidth;
-    const availH = app.clientHeight - (portrait && touch ? Math.min(240, app.clientHeight * 0.38) : 0);
-    let s = Math.min(availW / C.W, availH / C.H);
-    if (s >= 2) s = Math.floor(s * 2) / 2;
-    const w = Math.floor(C.W * s), h = Math.floor(C.H * s);
+    const cs = getComputedStyle(app);
+    const availW = app.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    const availH = app.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - (portrait && touch && mode === 'play' ? Math.min(240, app.clientHeight * 0.38) : 0);
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
+    const fit = Math.max(0.25, Math.min(availW / C.W_MIN, availH / C.H)); // CSS px por unidade lógica
+    // escala inteira: cada pixel da arte (meia unidade) vira N pixels físicos
+    const n = Math.floor(fit * dpr / C.SCALE * 1.0001);
+    let s = fit;
+    if (n >= 1 && (n * C.SCALE / dpr) >= fit * C.INT_SCALE_MIN) s = n * C.SCALE / dpr;
+    // largura lógica: preenche a tela até o limite de 21:9 (número par)
+    const W = Math.max(C.W_MIN, Math.min(C.W_MAX, Math.floor(availW / s / 2) * 2));
+    if (W !== C.W) { C.W = W; cv.width = W * C.SCALE; }
+    const w = Math.round(C.W * s), h = Math.round(C.H * s);
     stage.style.width = w + 'px'; stage.style.height = h + 'px';
-    stage.style.setProperty('--u', (w / C.W) + 'px');
+    stage.style.setProperty('--u', s + 'px');
     GC.DialogUI.resize(w, h);
     document.body.classList.toggle('portrait', portrait);
     if (GC.Mobile) GC.Mobile.updateRotate(mode);
+    GC.view = { W: C.W, scale: s, dpr, integer: Math.abs(s * dpr / C.SCALE - Math.round(s * dpr / C.SCALE)) < 1e-6 };
   }
   window.addEventListener('resize', resize);
+  window.addEventListener('orientationchange', () => setTimeout(resize, 120));
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', resize);
 
   function enableTouch() {
     if (document.body.classList.contains('touch')) return;
@@ -56,6 +69,7 @@
     if (GC.Mobile) GC.Mobile.updateRotate(m);
     GC.HUD.show(m === 'play' || m === 'pause');
     $('touch').dataset.mode = m;
+    if (document.body.classList.contains('portrait') && (m === 'play' || prevMode === 'play')) resize(); // retrato: reserva a área dos controles
   }
 
   function goTitle() {
@@ -147,6 +161,8 @@
     setTimeout(() => $('btnResume').focus({ preventScroll: true }), 30);
   }
   function resume() { show(null); setMode('play'); I.reset(); }
+  // pausa automática: aba em segundo plano ou controle desconectado
+  I.onAutoPause = (why) => { if (mode === 'play' && game) { pause(); if (why === 'controle') GC.HUD.toast('Controle desconectado: jogo pausado.'); } };
 
   function openGuide(from) {
     prevMode = from;
@@ -209,8 +225,39 @@
   click('btnInstallBack', goTitle);
   $('soundBtn').addEventListener('click', () => { GC.Audio.unlock(); if (GC.Audio.muted || !GC.Audio.running) { if (GC.Audio.muted) GC.Audio.toggleMute(); GC.Audio.unlock(); GC.HUD.toast('Som ligado.'); } else { GC.Audio.toggleMute(); GC.HUD.toast('Som desligado.'); } GC.HUD.reset(); });
   $('fsBtn').addEventListener('click', () => GC.Mobile.toggleFullscreen());
-  click('btnControls', () => { show('controlsScreen'); mode = 'controls'; setTimeout(() => $('btnControlsBack').focus({ preventScroll: true }), 30); });
-  click('btnControlsBack', goTitle);
+  click('btnControls', () => { renderKeys(); show('controlsScreen'); mode = 'controls'; setTimeout(() => $('btnControlsBack').focus({ preventScroll: true }), 30); });
+  click('btnKeysReset', () => { I.cancelRebind(); I.resetBinds(); renderKeys(); GC.HUD.toast('Teclas padrão restauradas.'); });
+  // tabela de remapeamento do teclado (as teclas padrão continuam as mesmas)
+  const KEY_LABELS = {
+    left: ['Andar para a esquerda', 'Direcional ou analógico'], right: ['Andar para a direita', 'Direcional ou analógico'],
+    up: ['Cima · escalar · mirar · interagir', 'Direcional ou analógico'], down: ['Baixo · agachar · deslizar', 'Direcional ou analógico'],
+    jump: ['Pular · nadar', 'A'], tool: ['Usar ferramenta', 'X ou RT'], swap: ['Trocar personagem', 'Y'], ally: ['Aliado', 'B ou RB'],
+    power: ['Poder', 'LT ou L3'], interact: ['Interagir', 'LB'], pause: ['Pausa', 'Start'], confirm: ['Confirmar (diálogos)', 'A']
+  };
+  function renderKeys() {
+    const t = $('keysTable'); t.innerHTML = '<tr><th>Ação</th><th>Teclado</th><th>Controle</th></tr>';
+    for (const a of I.ACTIONS) {
+      const tr = document.createElement('tr');
+      const th = document.createElement('th'); th.textContent = KEY_LABELS[a][0]; tr.appendChild(th);
+      const td = document.createElement('td');
+      const keys = I.binds[a].slice(); if (keys.length < 3) keys.push('');
+      keys.forEach((k, i) => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'key' + (k ? '' : ' add');
+        b.textContent = k ? I.keyName(k) : '+'; b.title = k ? 'Trocar esta tecla' : 'Acrescentar tecla';
+        b.addEventListener('click', () => {
+          document.querySelectorAll('#keysTable .key.wait').forEach((x) => x.classList.remove('wait'));
+          b.classList.add('wait'); b.textContent = '…';
+          $('keysHint').textContent = 'Aperte a nova tecla para "' + KEY_LABELS[a][0] + '" (Esc cancela).';
+          I.rebind(a, i, (ok, code) => { $('keysHint').textContent = ok ? 'Tecla ' + I.keyName(code) + ' gravada.' : 'Troca cancelada.'; renderKeys(); });
+        });
+        td.appendChild(b);
+      });
+      tr.appendChild(td);
+      const pad = document.createElement('td'); pad.className = 'pad'; pad.textContent = KEY_LABELS[a][1]; tr.appendChild(pad);
+      t.appendChild(tr);
+    }
+  }
+  click('btnControlsBack', () => { I.cancelRebind(); goTitle(); });
   click('btnSkipIntro', () => { GC.HUD.clearTransient(); openSelect(); });
   click('btnStart', () => { GC.Mobile.onStart(); startGame(); });
   click('btnSelectBack', goTitle);

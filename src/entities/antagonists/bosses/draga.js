@@ -69,7 +69,7 @@
     }
     shutdown(g) {
       GC.Audio.play('crash'); GC.Audio.play('neutralize');
-      g.shake(5, 0.6); g.fx.steam(this.cx, this.y, 14);
+      g.shake(GC.CFG.SHAKE_BLAST + 1, 0.6); g.fx.steam(this.cx, this.y, 14); g.hitStop = GC.CFG.HITSTOP_BOSS;
       this.finish(g); this.state = 'off';
       g.save.stats.machines++;
       g.save.stats.contained = (g.save.stats.contained || 0) + 1;

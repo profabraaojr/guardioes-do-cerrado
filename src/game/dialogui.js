@@ -27,6 +27,7 @@ GC.DialogUI = (function () {
   }
 
   function resize(cssW, cssH) {
+    if (!cv) return; // ainda não inicializado (redimensionamento antes do boot)
     dpr = Math.max(1, Math.min(4, window.devicePixelRatio || 1));
     const bw = Math.round(cssW * dpr), bh = Math.round(cssH * dpr);
     cv.width = bw; cv.height = bh;

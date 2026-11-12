@@ -34,6 +34,8 @@ body {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   padding-left: max(0px, env(safe-area-inset-left, 0px));
   padding-right: max(0px, env(safe-area-inset-right, 0px));
+  padding-top: max(0px, env(safe-area-inset-top, 0px));
+  padding-bottom: max(0px, env(safe-area-inset-bottom, 0px));
   box-sizing: border-box;
   background:
     radial-gradient(ellipse at 50% 40%, rgba(200, 100, 58, 0.10), transparent 60%),
@@ -244,3 +246,11 @@ body.touch.portrait[data-mode="play"] #touch { position: relative; flex: none; w
 /* controles de toque maiores e mais visíveis em telas pequenas na horizontal */
 body.touch[data-mode="play"] #touch { opacity: 0.95; }
 @media (max-height: 460px) { .dpad { width: 120px; height: 120px; } .b { width: 58px; height: 58px; } .b.big { width: 70px; height: 70px; } }
+
+/* ——— Remapeamento do teclado ——— */
+.keys-wrap { overflow-y: auto; max-height: calc(var(--u) * 150); }
+table.remap td .key { font: inherit; font-size: calc(var(--u) * 6.5); min-width: calc(var(--u) * 16); min-height: 28px; margin: 1px 3px 1px 0; padding: 0 calc(var(--u) * 3); color: var(--ink); background: var(--panel-2); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 3px; cursor: pointer; }
+table.remap td .key.add { color: var(--ink-dim); opacity: 0.6; }
+table.remap td .key.wait { background: var(--ipe); color: #1a1408; }
+table.remap td.pad { color: var(--ink-dim); font-size: calc(var(--u) * 6); padding-left: calc(var(--u) * 4); }
+.row-btns { display: flex; gap: calc(var(--u) * 4); flex-wrap: wrap; }

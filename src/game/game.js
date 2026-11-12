@@ -322,11 +322,39 @@
       if (this.bossActive && A) return { x: A.x0, y: A.floor - C.H + 40 };
       return { x: p.cx - C.W / 2 + p.facing * 28, y: p.cy - C.H * 0.56 };
     }
+    // Câmera de plataforma: zona morta horizontal com avanço na direção do movimento;
+    // a vertical se ajusta ao pousar (no ar, só se o guardião sair da faixa livre).
+    // Escalando, nadando ou em cipós, acompanha continuamente para não esconder o caminho.
+    followCam(dt) {
+      const p = this.player, cam = this.cam;
+      const t = this.camTarget();
+      if (this.bossActive && this.level.arena) {
+        // arena desenhada para 480 de largura: centraliza e cobre o excedente com faixas
+        const tx = t.x - (C.W - C.W_MIN) / 2;
+        cam.x = U.lerp(cam.x, tx, Math.min(1, dt * 4)); cam.y = U.lerp(cam.y, t.y, Math.min(1, dt * 5));
+        return;
+      }
+      const moving = Math.abs(p.vx) > 20;
+      this.camLook = U.approach(this.camLook || 0, moving ? Math.sign(p.vx) * C.CAM_LOOK : p.facing * C.CAM_LOOK * 0.5, dt * 70);
+      const want = p.cx + this.camLook, center = cam.x + C.W / 2, diff = want - center;
+      let tx = cam.x;
+      if (Math.abs(diff) > C.CAM_DEADZONE) tx = cam.x + diff - Math.sign(diff) * C.CAM_DEADZONE;
+      cam.x = U.lerp(cam.x, tx, Math.min(1, dt * C.CAM_LERP_X));
+      const follow = p.onGround || p.state === 'climb' || p.state === 'vine' || p.state === 'swim' || p.state === 'swing' || p.state === 'dead';
+      if (follow || this.camRefY === undefined) this.camRefY = p.cy;
+      const band = C.H * C.CAM_BAND, mid = cam.y + C.H * 0.56;
+      if (p.cy < mid - band) this.camRefY = Math.min(this.camRefY, p.cy + band * 0.6);
+      if (p.cy > mid + band * 0.8) this.camRefY = Math.max(this.camRefY, p.cy - band * 0.5);
+      const ty = this.camRefY - C.H * 0.56;
+      const ky = follow ? C.CAM_LERP_Y * (p.state === 'climb' || p.state === 'swim' ? 1.6 : 1) : C.CAM_LERP_Y * 1.4;
+      cam.y = U.lerp(cam.y, ty, Math.min(1, dt * ky));
+    }
     clampCam(c) {
+      if (this.bossActive && this.level.arena) return; // na arena a câmera fica centrada (com faixas)
       c.x = U.clamp(c.x, 0, this.level.pxW - C.W);
       c.y = U.clamp(c.y, 0, this.level.pxH - C.H);
     }
-    snapCamera() { const t = this.camTarget(); this.cam.x = t.x; this.cam.y = t.y; this.clampCam(this.cam); }
+    snapCamera() { const t = this.camTarget(); this.cam.x = t.x; this.cam.y = t.y; this.camRefY = this.player.cy; this.camLook = 0; this.clampCam(this.cam); }
 
     // ——— Atualização ———
     update(dt) {
@@ -335,6 +363,8 @@
       if (GC.HUD.dialogOpen) { if (GC.Input.pressed('confirm') || GC.Input.pressed('interact')) GC.HUD.advance(); return; }
       if (GC.HUD.cardOpen) { if (GC.Input.pressed('confirm') || GC.Input.pressed('interact') || GC.Input.pressed('pause')) GC.HUD.closeCard(); return; }
       if (this.paused) return;
+      // hit stop: congela a simulação por alguns quadros ao acertar o chefe
+      if (this.hitStop > 0) { this.hitStop--; return; }
       this.time += dt;
       this.save.stats.time += dt;
       this.swapCd = (this.swapCd || 0) - dt;
@@ -383,10 +413,7 @@
       this.updateObserve(dt);
 
       // câmera
-      const t = this.camTarget();
-      const k = this.bossActive ? 4 : 7;
-      this.cam.x = U.lerp(this.cam.x, t.x, Math.min(1, dt * k));
-      this.cam.y = U.lerp(this.cam.y, t.y, Math.min(1, dt * 5));
+      this.followCam(dt);
       this.clampCam(this.cam);
       if (this.cam.shakeT > 0) this.cam.shakeT -= dt; else this.cam.shake = 0;
     }
@@ -442,6 +469,8 @@
       if (this.darkA > 0.01) this.drawDark(ctx, cam);
       if (this.reveal > 0) { ctx.fillStyle = 'rgba(255,220,120,' + (0.06 * Math.min(1, this.reveal)) + ')'; ctx.fillRect(0, 0, C.W, C.H); }
       if (this.player.state === 'dead') { ctx.fillStyle = 'rgba(20,10,10,' + (0.6 * (1 - this.player.deadT / 1.4)) + ')'; ctx.fillRect(0, 0, C.W, C.H); }
+      // arena do chefe em tela larga: faixas laterais mantêm a área de 480 px
+      if (this.bossActive && this.level.arena && C.W > C.W_MIN) { const bw = (C.W - C.W_MIN) / 2; ctx.fillStyle = '#0b0906'; ctx.fillRect(0, 0, bw, C.H); ctx.fillRect(C.W - bw, 0, bw, C.H); }
     }
 
     drawPartner(ctx, cam) {
@@ -488,6 +517,7 @@
     }
 
     drawDark(ctx, cam) {
+      if (this.darkCanvas.width !== C.W) [this.darkCanvas, this.darkCtx] = U.makeCanvas(C.W, C.H); // largura mudou (tela larga)
       const d = this.darkCtx, p = this.player;
       d.globalCompositeOperation = 'source-over';
       d.clearRect(0, 0, C.W, C.H);

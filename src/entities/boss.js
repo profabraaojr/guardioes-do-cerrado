@@ -33,7 +33,7 @@ GC.Ent.boss = class Colosso extends GC.Thing {
         if (!this.toldShield) { this.toldShield = true; g.say('larinha', 'Os núcleos têm escudo! Troque para mim e use o drone (Aliado) para analisar o robô.'); }
         return true;
       }
-      v.hp -= 1; v.flash = 0.1;
+      v.hp -= 1; v.flash = 0.1; g.hitStop = GC.CFG.HITSTOP_BOSS; // pausa curta de impacto
       GC.Audio.play('metal'); g.fx.sparks(proj.x, proj.y, 6);
       if (v.hp <= 0) this.valveDown(v, g);
       return true;
