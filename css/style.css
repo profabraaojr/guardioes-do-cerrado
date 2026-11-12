@@ -257,3 +257,6 @@ table.remap td .key.add { color: var(--ink-dim); opacity: 0.6; }
 table.remap td .key.wait { background: var(--ipe); color: #1a1408; }
 table.remap td.pad { color: var(--ink-dim); font-size: calc(var(--u) * 6); padding-left: calc(var(--u) * 4); }
 .row-btns { display: flex; gap: calc(var(--u) * 4); flex-wrap: wrap; }
+
+/* diálogo aberto (o jogo fica parado): os botões de toque saem da frente e o toque avança a fala */
+body.touch.dlg-open[data-mode="play"] #touch { opacity: 0; pointer-events: none; transition: opacity 0.15s; }
