@@ -1,4 +1,4 @@
-// Retratos 40×40 em pixel art, desenhados pixel a pixel e exibidos sempre em
+// Retratos 40×40 em pixel art (rostos de Piatã e Larinha revisados: ver assets/portraits/revisao/), desenhados pixel a pixel e exibidos sempre em
 // escala inteira. Cada personagem tem expressões: neutral, happy, surprised,
 // worried, determined. Baseado na proposta de identidade visual (imagem 01).
 GC.Portraits = (function () {
@@ -70,6 +70,56 @@ GC.Portraits = (function () {
     }
   }
 
+
+  // ——— Rosto revisado (v2) de Piatã e Larinha ———
+  // Vista de 3/4 suave para a direita. Olhos 4×4 na mesma altura (linhas 17–20),
+  // espaçados por 4 px; nariz de 2 px apontando para a direita; boca pequena
+  // centrada no eixo do rosto; sombreamento em três tons da pele (base, sombra, luz).
+  function faceV2(P, mood, C) {
+    const W = '#f6f2ea', PUP = '#140c0c', HI = '#ffffff', M = '#7a3028', T = '#f4f0e8';
+    const L = [15, 16, 17, 18], R = [22, 23, 24, 25];
+    // sobrancelhas (linha 15), com o desenho de cada expressão
+    const by = mood === 'surprised' ? 14 : 15;
+    if (mood === 'worried') { P.r(15, by + 1, 2, 1, C.brow); P.r(17, by, 2, 1, C.brow); P.r(22, by, 2, 1, C.brow); P.r(24, by + 1, 2, 1, C.brow); }
+    else if (mood === 'determined') { P.r(15, by, 2, 1, C.brow); P.r(17, by + 1, 2, 1, C.brow); P.r(22, by + 1, 2, 1, C.brow); P.r(24, by, 2, 1, C.brow); }
+    else { P.r(15, by, 4, 1, C.brow); P.r(22, by, 4, 1, C.brow); }
+    if (mood === 'happy') {
+      // olhos sorrindo: arcos fechados
+      for (const X of [L, R]) { P.r(X[1], 18, 2, 1, C.lash); P.p(X[0], 19, C.lash); P.p(X[3], 19, C.lash); }
+      if (C.lashes) { P.p(14, 18, C.lash); P.p(26, 18, C.lash); }
+    } else {
+      // olho amendoado 4×3: esclera nas pontas, íris de 2 px, pupila e brilho de 1 px
+      const top = mood === 'surprised' ? 17 : 18;
+      for (const X of [L, R]) {
+        P.r(X[0], top, 4, 20 - top, W);                 // esclera
+        P.r(X[1], top, 2, 21 - top, C.iris);            // íris (embaixo arredonda o olho)
+        P.p(X[2], 19, PUP);                              // pupila
+        P.p(X[1], top, HI);                              // brilho
+        P.r(X[0], top - 1, 4, 1, C.lash);               // pálpebra superior
+      }
+      if (C.lashes) { P.p(14, top - 1, C.lash); P.p(26, top - 1, C.lash); }
+    }
+    // nariz: luz na ponte e sombra embaixo, sem contorno duro
+    P.p(21, 21, C.light); P.p(22, 21, C.shadow); P.p(22, 22, C.shadow);
+    // boca centrada no eixo do rosto (x ≈ 20,5)
+    switch (mood) {
+      case 'happy': P.r(18, 24, 6, 1, M); P.r(19, 24, 4, 1, T); P.r(19, 25, 4, 1, M); break;
+      case 'surprised': P.r(20, 24, 2, 2, M); break;
+      case 'worried': P.r(19, 24, 4, 1, M); P.p(18, 25, M); P.p(23, 25, M); break;
+      case 'determined': P.r(18, 24, 5, 1, M); P.p(23, 23, M); break;
+      default: P.r(19, 24, 4, 1, M); P.p(18, 23, M); P.p(23, 23, M);
+    }
+  }
+  // cabeça: oval com queixo suave; sombra fina no contorno esquerdo e sob a franja
+  function headV2(P, C) {
+    P.r(17, 26, 7, 5, C.shadow);                         // pescoço
+    P.el(20.5, 19, 8, 8.5, C.skin); P.el(20.8, 22.5, 6.6, 5.8, C.skin);
+    P.p(14, 24, C.shadow); P.p(15, 25, C.shadow); P.p(16, 26, C.shadow); // contorno do maxilar
+    P.r(17, 27, 7, 1, C.shadow);                         // sombra do queixo sobre o pescoço
+    P.p(26, 21, C.light);                                // luz na bochecha
+    P.el(12.5, 19.5, 1.5, 2.2, C.skin); P.p(12, 20, C.shadow); // orelha
+  }
+
   function piata(P, mood) {
     const C = { skin: '#a86a42', shadow: '#82502e', light: '#c4855a', hair: '#1c1820', hairL: '#3a3444', brow: '#1c1820', lash: '#1c1820', iris: '#5a3018' };
     // tronco: camiseta clara, alças da mochila e colar com pingente de folha
@@ -78,22 +128,19 @@ GC.Portraits = (function () {
     P.r(9, 31, 3, 9, '#7a4a2a'); P.r(29, 32, 3, 8, '#7a4a2a'); P.p(10, 34, '#c8a060'); P.p(30, 35, '#c8a060');
     for (let i = 0; i < 4; i++) { P.p(16 + i, 30 + i, '#6a4a2a'); P.p(24 - i, 30 + i, '#6a4a2a'); }
     P.r(19, 34, 3, 3, '#4aa03a'); P.p(20, 34, '#7ad05a'); P.p(20, 37, '#2e6a24');
-    // pescoço e rosto
-    P.r(17, 25, 7, 6, C.shadow);
-    P.el(20, 18, 8.5, 9, C.skin); P.el(21, 21, 7, 6.5, C.skin);
-    P.r(12, 15, 2, 8, C.shadow); P.r(13, 23, 2, 2, C.shadow);
-    P.r(26, 19, 2, 1, C.light);
-    P.el(12, 19, 2, 3, C.skin); P.p(12, 19, C.shadow);
-    // cabelo espetado
-    P.el(19, 11, 10.5, 6, C.hair);
+    // cabeça revisada
+    headV2(P, C);
+    // cabelo espetado (mesmo desenho), franja curta para liberar a testa
+    P.el(19, 10, 10.5, 5.5, C.hair);
     [[9, 10, 4, 3, 5], [11, 7, 9, 0, 5], [16, 6, 15, -1, 5], [21, 6, 23, 0, 5], [26, 7, 30, 2, 5], [29, 10, 33, 7, 4], [8, 14, 4, 13, 4]].forEach(([bx, by, tx, ty, w]) => P.spike(bx, by, tx, ty, w, C.hair));
     P.p(15, 4, C.hairL); P.p(22, 3, C.hairL); P.p(27, 5, C.hairL); P.r(17, 7, 3, 1, C.hairL);
-    P.r(13, 13, 15, 2, C.hair); P.p(27, 15, C.hair); P.p(14, 15, C.hair);
-    // faixa vermelha com grafismo
-    P.r(10, 10, 20, 3, '#c8302a'); P.r(10, 12, 20, 1, '#9a2420');
+    P.r(12, 13, 17, 1, C.hair); P.r(12, 14, 2, 3, C.hair); P.p(28, 14, C.hair); P.p(16, 14, C.hair); P.p(23, 14, C.hair);
+    P.r(13, 14, 15, 1, C.shadow); P.p(16, 14, C.hair); P.p(23, 14, C.hair); P.r(12, 14, 2, 3, C.hair);
+    // faixa vermelha e laranja com grafismo
+    P.r(10, 10, 20, 3, '#c8302a'); P.r(10, 12, 20, 1, '#9a2420'); P.r(10, 10, 20, 1, '#e8702a');
     for (let i = 11; i < 29; i += 3) { P.p(i, 11, '#f2c230'); P.p(i + 1, 11, '#f4f0e8'); }
     P.r(6, 11, 4, 2, '#c8302a'); P.r(3, 13, 4, 2, '#c8302a'); P.p(4, 15, '#9a2420');
-    face(P, mood, C);
+    faceV2(P, mood, C);
   }
 
   function larinha(P, mood) {
@@ -106,22 +153,24 @@ GC.Portraits = (function () {
     P.r(16, 29, 8, 3, '#f4f0e8');
     P.r(9, 31, 3, 9, '#24304e'); P.r(29, 32, 3, 8, '#24304e'); P.p(10, 35, '#5ae0f0'); P.p(30, 36, '#5ae0f0');
     P.r(13, 33, 3, 2, '#4aa03a');
-    // pescoço e rosto
-    P.r(17, 25, 7, 6, C.shadow);
-    P.el(20, 18, 8.5, 9, C.skin); P.el(21, 21, 7, 6.5, C.skin);
-    P.r(12, 15, 2, 7, C.shadow);
-    P.r(26, 19, 2, 1, C.light);
-    P.p(24, 22, '#e07a72'); P.p(25, 22, '#e07a72');
-    // franja e cachos que emolduram o rosto
-    P.el(20, 10, 10, 5, C.hair); P.r(12, 12, 16, 2, C.hair);
-    P.el(12, 21, 3, 6, C.hair); P.p(11, 19, C.hairL); P.p(13, 24, C.hairL);
-    P.p(14, 14, C.hair); P.p(27, 14, C.hair); P.p(16, 14, C.hairL); P.p(22, 13, C.hairL);
-    P.p(12, 25, '#5ae0f0'); // brinco
-    // óculos de proteção na testa
+    // cacho lateral atrás do rosto
+    P.el(11, 21, 2.6, 6, C.hair); P.p(10, 19, C.hairL); P.p(11, 24, C.hairL);
+    // cabeça revisada
+    headV2(P, C);
+    // sardas leves (tom de sombra da pele)
+    P.p(15, 21, C.shadow); P.p(17, 22, C.shadow); P.p(24, 22, C.shadow); P.p(26, 21, C.shadow);
+    // franja cacheada curta e cachos que emolduram o rosto
+    P.el(20, 10, 10, 4.5, C.hair); P.r(12, 12, 17, 1, C.hair);
+    P.p(13, 13, C.hair); P.p(14, 13, C.hair); P.p(17, 13, C.hair); P.p(21, 13, C.hair); P.p(25, 13, C.hair); P.p(27, 13, C.hair); P.p(28, 13, C.hair);
+    P.r(12, 13, 1, 5, C.hair); P.r(28, 13, 1, 4, C.hair);
+    P.p(16, 12, C.hairL); P.p(22, 11, C.hairL); P.p(26, 12, C.hairD);
+    P.r(13, 14, 15, 1, C.shadow); P.p(14, 14, C.hair); P.p(27, 14, C.hair);
+    P.p(11, 25, '#5ae0f0'); // brinco
+    // óculos de aviador na testa
     P.r(9, 9, 24, 2, '#3a3a48');
     P.el(17, 9, 3.5, 3, '#c8ccd8'); P.el(17, 9, 2.5, 2, '#4ab8e8'); P.p(16, 8, '#ffffff');
     P.el(25, 9, 3.5, 3, '#c8ccd8'); P.el(25, 9, 2.5, 2, '#4ab8e8'); P.p(24, 8, '#ffffff');
-    face(P, mood, C);
+    faceV2(P, mood, C);
   }
 
   function cida(P, mood) {
