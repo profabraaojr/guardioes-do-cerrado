@@ -62,8 +62,9 @@ GC.DialogUI = (function () {
     const pad = Math.round(13 * u);
     const boxH = pad * 2 + lh * 3;
     const boxY = bh - m - boxH;
-    const pk = Math.max(1, Math.round(u * 1.12));             // fator inteiro do retrato
-    const ps = 80 * pk, frame = ps + q * 8;
+    const PS = (GC.PortraitsHD && GC.PortraitsHD.SIZE) || 80;
+    const pk = Math.max(1, Math.round(u * 90 / PS));           // fator inteiro do retrato (≈ 90 unidades)
+    const ps = PS * pk, frame = ps + q * 8;
     const tx = narr ? boxX + pad + q * 4 : boxX + frame + Math.round(10 * u);
     const tw = boxX + boxW - pad - q * 6 - tx;
     return { narr, m, boxW, boxX, boxY, boxH, fs, lh, pad, pk, ps, frame, tx, tw };
@@ -168,7 +169,7 @@ GC.DialogUI = (function () {
     return w;
   }
   function portrait(x, y, who, mood, pk) {
-    const ps = 80 * pk, f = q * 4, size = ps + f * 2;
+    const ps = ((GC.PortraitsHD && GC.PortraitsHD.SIZE) || 80) * pk, f = q * 4, size = ps + f * 2;
     frameBox(x, y, size, size);
     const g = cx.createLinearGradient(0, y + f, 0, y + f + ps);
     g.addColorStop(0, who === 'vertice' ? '#0a2230' : '#2a5a7a'); g.addColorStop(1, who === 'vertice' ? '#06121a' : '#1a3048');
@@ -235,7 +236,8 @@ GC.DialogUI = (function () {
 
   function drawSpeech() {
     const s = speech;
-    const fs = 9.5 * u, lh = Math.round(fs * 1.3), pk = Math.max(1, Math.round(u * 0.62)), ps = 80 * pk, f = q * 4, size = ps + f * 2;
+    const PS = (GC.PortraitsHD && GC.PortraitsHD.SIZE) || 80;
+    const fs = 9.5 * u, lh = Math.round(fs * 1.3), pk = Math.max(1, Math.round(u * 52 / PS)), ps = PS * pk, f = q * 4, size = ps + f * 2;
     const w = Math.min(bw - 16 * u, Math.round(340 * u));
     const tx0 = 8 * u + size + 8 * u, tw = w - size - 20 * u;
     const lines = wrapRuns(s.text, tw, fs);
